@@ -14,36 +14,31 @@
   --green:#16c784;
   --red:#ff4d4d;
   --orange:#ff9900;
-  --text:#eee;
-  --card:#1a1a1a;
-  --card-shadow:0 10px 25px rgba(0,0,0,0.6);
+  --bg-dark:#0e0e0e;
+  --text-dark:#eee;
+  --card-dark:#1e1e1e;
+  --glow:#00ffff;
 }
 
 body{
   margin:0;
   font-family:Arial, Helvetica, sans-serif;
   text-align:center;
-  background:#0a0a0a;
-  color: var(--text);
-  overflow-x:hidden;
+  background:radial-gradient(circle at top, #0a0a0a, #111 60%);
+  color:var(--text-dark);
+  transition: all 0.3s ease;
 }
 
 .wrapper{
   padding:20px;
   max-width:1100px;
   margin:auto;
-  background: rgba(20,20,20,0.95);
-  border-radius: 16px;
-  position: relative;
-  z-index: 2;
 }
 
 h1{
   font-size:2.7rem;
   margin-bottom:5px;
   animation:pump 1.5s infinite alternate;
-  color:#00ffff;
-  text-shadow:0 0 8px #00ffff;
 }
 
 @keyframes pump{
@@ -52,58 +47,29 @@ h1{
 }
 
 .tagline{
-  opacity:.8;
+  opacity:.7;
   margin-bottom:20px;
-  color:#ffdd00;
-  text-shadow:0 0 6px #ffdd00;
 }
 
 .card{
-  background: var(--card);
+  background:var(--card-dark);
   border-radius:16px;
   padding:18px;
   margin:12px;
-  box-shadow: var(--card-shadow);
+  box-shadow:0 10px 25px rgba(0,0,0,0.3);
   transition: all 0.3s ease;
-  color:#eee;
 }
 
 .flex{
   display:flex;
   flex-wrap:wrap;
   justify-content:center;
-  gap:10px;
 }
 
 .stat{
   font-weight:bold;
   margin:6px 0;
-  font-size:1.3rem;
-  color:#00ffff;
-  text-shadow:0 0 6px #00ffff;
-  transition: transform 0.3s ease, color 0.3s ease, text-shadow 0.3s ease;
-  padding:8px 12px;
-  border-radius:8px;
-}
-
-.stat.pulse{
-  animation: pulse 0.6s ease;
-}
-
-@keyframes pulse{
-  0% { transform: scale(1); text-shadow:0 0 6px #00ffff; }
-  50% { transform: scale(1.15); text-shadow:0 0 20px #00ffff; color:#00ffff; }
-  100% { transform: scale(1); text-shadow:0 0 6px #00ffff; }
-}
-
-/* Neon glow animation for price boxes */
-.neon-pulse{
-  animation: neonGlow 0.8s ease;
-}
-@keyframes neonGlow{
-  0%{ box-shadow:0 0 2px #0ff,0 0 5px #0ff; transform: scale(1);}
-  50%{ box-shadow:0 0 10px #0ff,0 0 20px #0ff; transform: scale(1.08);}
-  100%{ box-shadow:0 0 2px #0ff,0 0 5px #0ff; transform: scale(1);}
+  transition: all 0.3s ease;
 }
 
 .wallet-btn{
@@ -128,25 +94,10 @@ h1{
   word-break:break-all;
 }
 
-.wallet-display{
-  display:flex;
-  justify-content:center;
-  gap:20px;
-  margin-top:12px;
+.small{
+  font-size:.85rem;
+  opacity:.7;
 }
-
-.wallet-display div{
-  font-size:1.8rem;
-  font-weight:bold;
-  text-shadow: 0 0 10px rgba(0,0,0,0.7);
-  padding:12px 18px;
-  border-radius:12px;
-}
-
-.wallet-sol{ color:#00ffff; background:rgba(0,255,255,0.15);}
-.wallet-brn{ color:#ffdd00; background:rgba(255,221,0,0.15);}
-.wallet-usd{ color:#ff66ff; background:rgba(255,102,255,0.15);}
-.wallet-live-price{ color:#00ff00; background:rgba(0,255,0,0.15); }
 
 .loader{
   border:6px solid #333;
@@ -163,29 +114,32 @@ h1{
   100%{transform:rotate(360deg);}
 }
 
+/* Neon pulse effect */
+.pulse{
+  animation: pulseGlow 1s ease-in-out infinite;
+}
+@keyframes pulseGlow{
+  0%{text-shadow:0 0 5px var(--glow);}
+  50%{text-shadow:0 0 15px var(--glow);}
+  100%{text-shadow:0 0 5px var(--glow);}
+}
+
 footer{
   margin-top:30px;
   padding:20px;
   font-size:.9rem;
   opacity:.7;
-  color:#aaa;
-  text-shadow:0 0 5px #000;
 }
 
-/* Particle Background Canvas */
-#bgCanvas{
-  position: fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  z-index:1;
+.balance-box{
+  font-size:1.2rem;
+  font-weight:bold;
+  color:#0ff;
+  text-shadow:0 0 5px #0ff;
 }
 </style>
 </head>
-<body class="dark">
-
-<canvas id="bgCanvas"></canvas>
+<body>
 
 <div class="wrapper">
 
@@ -193,15 +147,22 @@ footer{
 <div class="tagline">We are Bro's. We are BRONIN!.</div>
 
 <div class="flex">
-  <div class="card stat" id="price">Loading...</div>
-  <div class="card stat" id="marketcap">Loading...</div>
-  <div class="card stat" id="holders">Loading...</div>
-</div>
 
-<div class="card">
-  <div class="wallet-display">
-    <div class="wallet-live-price">Live: $<span id="livePrice">0</span></div>
+  <div class="card pulse" id="priceCard" style="min-width:250px;">
+    <div class="stat">Price</div>
+    $<span id="price">0.000000</span>
   </div>
+
+  <div class="card pulse" id="fdvCard" style="min-width:250px;">
+    <div class="stat">FDV</div>
+    $<span id="marketcap">0</span>
+  </div>
+
+  <div class="card pulse" id="holdersCard" style="min-width:250px;">
+    <div class="stat">BRO-lders</div>
+    <span id="holders">0</span>
+  </div>
+
 </div>
 
 <div class="card">
@@ -224,36 +185,20 @@ footer{
     <div class="loader"></div>
   </div>
 
-  <div id="walletInfo" style="display:none;margin-top:10px;">
-    <div class="small">Connected</div>
-    <div id="walletAddress" style="margin-bottom:10px;"></div>
-    <div class="wallet-display">
-      <div class="wallet-sol">SOL: <span id="solBalance">0</span></div>
-      <div class="wallet-brn">BRN: <span id="tokenBalance">0</span></div>
-      <div class="wallet-usd">USD: $<span id="usdValue">0</span></div>
-    </div>
+  <div id="walletInfo" class="balance-box" style="display:none;margin-top:10px;">
+    Connected: <div id="walletAddress"></div>
+    SOL: <span id="solBalance">0</span> | BRN: <span id="tokenBalance">0</span> | $<span id="usdValue">0</span>
   </div>
 
-</div>
-
-<div class="card">
-  <h2>📈 Chart</h2>
-  <iframe
-    id="chartFrame"
-    width="100%"
-    height="420"
-    style="border:0;border-radius:12px;">
-  </iframe>
 </div>
 
 <footer>
 © 2026 Bronin Token • Buy Responsibly 😎
 </footer>
 
-</div>
-
-<div id="phantomModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.8);justify-content:center;align-items:center;">
-  <div style="background:#111;padding:25px;border-radius:15px;max-width:380px;color:#fff;">
+<!-- Phantom modal -->
+<div id="phantomModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);justify-content:center;align-items:center;">
+  <div style="background:#111;padding:25px;border-radius:15px;max-width:380px;color:white;">
     <h3>Phantom required</h3>
     <p>Install Phantom wallet to continue.</p>
     <button class="wallet-btn" onclick="installPhantom()">Install</button>
@@ -261,15 +206,11 @@ footer{
 </div>
 
 <script>
-const TOKEN_MINT = "J4Db1dSx5qkhghjbzNXarMyQ2KirijJGGFb9h9jzpump"; 
-const PAIR_ADDRESS = "45sspkuqs1ssbedqxd2mzrmdjyaxf7gyqyhs5xdxuwc5"; 
+const TOKEN_MINT = "J4Db1dSx5qkhghjbzNXarMyQ2KirijJGGFb9h9jzpump";
 
-document.getElementById("buyBtn").onclick = () => {
+// Open Pump.Fun buy page
+document.getElementById("buyBtn").onclick = () =>
   window.open(`https://pump.fun/coin/${TOKEN_MINT}`, "_blank");
-};
-
-document.getElementById("chartFrame").src =
-  `https://dexscreener.com/solana/${PAIR_ADDRESS}?embed=1&theme=dark`;
 
 const connection = new solanaWeb3.Connection(
   solanaWeb3.clusterApiUrl("mainnet-beta"),
@@ -279,25 +220,41 @@ const connection = new solanaWeb3.Connection(
 let provider;
 let publicKey;
 let lastPrice = 0;
-let autoDisconnectTimer;
+let inactivityTimer;
 
+// Shorten address
 function shortenAddress(a){ return a.slice(0,4) + "..." + a.slice(-4); }
 
+// Connect wallet
 async function connectWallet(){
-  if(!(window.solana && window.solana.isPhantom)){ phantomModal.style.display="flex"; return; }
+  if(!(window.solana && window.solana.isPhantom)){
+    phantomModal.style.display="flex";
+    return;
+  }
   provider = window.solana;
-  document.getElementById("spinner").style.display = "block";
+  spinner.style.display="block";
   try{
     const resp = await provider.connect();
     publicKey = resp.publicKey;
     updateUIConnected();
     confetti({particleCount:120,spread:80,origin:{y:0.6}});
     getBalances();
-    startAutoDisconnectTimer();
+    resetInactivityTimer();
   }catch(e){}
-  document.getElementById("spinner").style.display = "none";
+  spinner.style.display="none";
 }
 
+// Disconnect wallet
+async function disconnectWallet(){
+  if(provider) await provider.disconnect();
+  publicKey = null;
+  connectBtn.style.display="inline-block";
+  disconnectBtn.style.display="none";
+  walletInfo.style.display="none";
+  clearTimeout(inactivityTimer);
+}
+
+// Update UI when connected
 function updateUIConnected(){
   connectBtn.style.display="none";
   disconnectBtn.style.display="inline-block";
@@ -305,125 +262,83 @@ function updateUIConnected(){
   walletAddress.innerText = shortenAddress(publicKey.toString());
 }
 
-async function disconnectWallet(){
-  if(provider) await provider.disconnect();
-  publicKey=null;
-  connectBtn.style.display="inline-block";
-  disconnectBtn.style.display="none";
-  walletInfo.style.display="none";
-  stopAutoDisconnectTimer();
-}
-
+// Auto connect
 async function autoConnect(){
   if(window.solana && window.solana.isPhantom){
     provider = window.solana;
     try{
       const r = await provider.connect({onlyIfTrusted:true});
-      if(r.publicKey){ publicKey=r.publicKey; updateUIConnected(); getBalances(); startAutoDisconnectTimer(); }
+      if(r.publicKey){
+        publicKey=r.publicKey;
+        updateUIConnected();
+        getBalances();
+        resetInactivityTimer();
+      }
     }catch{}
   }
 }
-
 window.addEventListener("load", autoConnect);
 
+// Get balances
 async function getBalances(){
   if(!publicKey) return;
   const balance = await connection.getBalance(publicKey);
-  solBalance.innerText = (balance / solanaWeb3.LAMPORTS_PER_SOL).toFixed(4);
-  tokenBalance.innerText = tokenBalance.innerText;
-  usdValue.innerText = ((parseFloat(tokenBalance.innerText)||0) * lastPrice).toFixed(2);
+  solBalance.innerText = (balance/solanaWeb3.LAMPORTS_PER_SOL).toFixed(4);
 
-  document.querySelector(".wallet-sol").classList.add("pulse");
-  document.querySelector(".wallet-brn").classList.add("pulse");
-  document.querySelector(".wallet-usd").classList.add("pulse");
-  setTimeout(()=>{
-    document.querySelector(".wallet-sol").classList.remove("pulse");
-    document.querySelector(".wallet-brn").classList.remove("pulse");
-    document.querySelector(".wallet-usd").classList.remove("pulse");
-  },600);
+  const tokenAccounts = await connection.getParsedTokenAccountsByOwner(
+    publicKey,
+    { mint:new solanaWeb3.PublicKey(TOKEN_MINT) }
+  );
+
+  let tokenAmount = 0;
+  if(tokenAccounts.value.length > 0){
+    tokenAmount = tokenAccounts.value[0].account.data.parsed.info.tokenAmount.uiAmount;
+  }
+
+  tokenBalance.innerText = tokenAmount ?? 0;
+  usdValue.innerText = ((tokenAmount||0) * lastPrice).toFixed(2);
+  resetInactivityTimer();
 }
 
-// Auto disconnect after 2 minutes inactivity
-function startAutoDisconnectTimer(){
-  stopAutoDisconnectTimer();
-  let lastActivity = Date.now();
-  function resetTimer(){ lastActivity = Date.now(); }
-  window.addEventListener("mousemove", resetTimer);
-  window.addEventListener("keydown", resetTimer);
-  autoDisconnectTimer = setInterval(()=>{
-    if(Date.now() - lastActivity > 120000){ // 2 min
-      disconnectWallet();
-    }
-  }, 10000);
-}
-
-function stopAutoDisconnectTimer(){
-  clearInterval(autoDisconnectTimer);
-}
-
+// Fetch live price, FDV, holders from DexScreener
 async function fetchTokenData(){
   try{
     const res = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${TOKEN_MINT}`);
     const data = await res.json();
-    const pair = data.pairs.find(p => p.pairAddress === PAIR_ADDRESS) || data.pairs[0];
+    const pair = data.pairs[0];
     lastPrice = parseFloat(pair.priceUsd) || 0;
+    price.innerText = lastPrice ? lastPrice.toFixed(6) : "0";
+    marketcap.innerText = pair.fdv ? parseFloat(pair.fdv).toLocaleString() : "0";
+    holders.innerText = pair.holders ? pair.holders.toLocaleString() : "0";
 
-    const priceEl = document.getElementById("price");
-    const fdvEl = document.getElementById("marketcap");
-    const holdersEl = document.getElementById("holders");
-    const liveEl = document.getElementById("livePrice");
-
-    priceEl.innerText = lastPrice.toFixed(6);
-    fdvEl.innerText = pair.fdv ? parseFloat(pair.fdv).toLocaleString() : "N/A";
-    holdersEl.innerText = pair.holders ? pair.holders.toLocaleString() : "N/A";
-    liveEl.innerText = lastPrice.toFixed(6);
-
-    // Add neon pulse
-    [priceEl, fdvEl, holdersEl, liveEl].forEach(el=>{
-      el.classList.add("neon-pulse");
-      setTimeout(()=> el.classList.remove("neon-pulse"),800);
+    // Neon pulse effect on update
+    [priceCard, fdvCard, holdersCard].forEach(el=>{
+      el.classList.remove("pulse");
+      void el.offsetWidth;
+      el.classList.add("pulse");
     });
 
     if(publicKey) getBalances();
-  }catch{
-    document.getElementById("price").innerText="N/A";
-    document.getElementById("marketcap").innerText="N/A";
-    document.getElementById("holders").innerText="N/A";
-    document.getElementById("livePrice").innerText="0";
-  }
+  }catch{}
 }
-
-setInterval(fetchTokenData,5000); // update every 5 sec
+setInterval(fetchTokenData,15000);
 fetchTokenData();
 
+// Phantom install
 function installPhantom(){ window.open("https://phantom.app/","_blank"); }
 
-/* Particle Background Effect */
-const canvas = document.getElementById('bgCanvas');
-const ctx = canvas.getContext('2d');
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-let stars = [];
-for(let i=0;i<150;i++){
-  stars.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, r:Math.random()*1.5+0.5, dx:(Math.random()-0.5)*0.2, dy:(Math.random()-0.5)*0.2});
+// Auto disconnect after 2 min inactivity
+function resetInactivityTimer(){
+  clearTimeout(inactivityTimer);
+  inactivityTimer = setTimeout(()=>{
+    if(publicKey) disconnectWallet();
+  }, 120000); // 2 minutes
 }
-function animateStars(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  for(let s of stars){
-    ctx.beginPath();
-    ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
-    ctx.fillStyle='rgba(255,255,255,0.7)';
-    ctx.fill();
-    s.x+=s.dx;
-    s.y+=s.dy;
-    if(s.x<0)s.x=canvas.width;
-    if(s.x>canvas.width)s.x=0;
-    if(s.y<0)s.y=canvas.height;
-    if(s.y>canvas.height)s.y=0;
-  }
-  requestAnimationFrame(animateStars);
-}
-animateStars();
+
+// Reset inactivity on user interaction
+["mousemove","keydown","click","scroll","touchstart"].forEach(evt=>{
+  document.addEventListener(evt, resetInactivityTimer);
+});
 </script>
 
 </body>
