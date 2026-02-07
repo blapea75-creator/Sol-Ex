@@ -23,17 +23,19 @@ body{
   margin:0;
   font-family:Arial, Helvetica, sans-serif;
   text-align:center;
-  background:#0a0a0a url('background.jpg') no-repeat center center fixed;
-  background-size: cover;
+  background:#0a0a0a;
   color: var(--text);
+  overflow-x:hidden;
 }
 
 .wrapper{
   padding:20px;
   max-width:1100px;
   margin:auto;
-  background: rgba(20,20,20,0.9);
+  background: rgba(20,20,20,0.95);
   border-radius: 16px;
+  position: relative;
+  z-index: 2;
 }
 
 h1{
@@ -78,6 +80,17 @@ h1{
   font-size:1.3rem;
   color:#00ffff;
   text-shadow:0 0 6px #00ffff;
+  transition: transform 0.3s ease, color 0.3s ease, text-shadow 0.3s ease;
+}
+
+.stat.pulse{
+  animation: pulse 0.6s ease;
+}
+
+@keyframes pulse{
+  0% { transform: scale(1); text-shadow:0 0 6px #00ffff; }
+  50% { transform: scale(1.15); text-shadow:0 0 20px #00ffff; color:#00ffff; }
+  100% { transform: scale(1); text-shadow:0 0 6px #00ffff; }
 }
 
 .wallet-btn{
@@ -144,9 +157,21 @@ footer{
   color:#aaa;
   text-shadow:0 0 5px #000;
 }
+
+/* Particle Background Canvas */
+#bgCanvas{
+  position: fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  z-index:1;
+}
 </style>
 </head>
-<body>
+<body class="dark">
+
+<canvas id="bgCanvas"></canvas>
 
 <div class="wrapper">
 
@@ -155,18 +180,15 @@ footer{
 
 <div class="flex">
   <div class="card" style="min-width:250px;">
-    <div class="stat">Price</div>
-    $<span id="price">Loading...</span>
+    <div class="stat" id="price">Loading...</div>
   </div>
 
   <div class="card" style="min-width:250px;">
-    <div class="stat">FDV</div>
-    $<span id="marketcap">Loading...</span>
+    <div class="stat" id="marketcap">Loading...</div>
   </div>
 
   <div class="card" style="min-width:250px;">
-    <div class="stat">BRO-lders</div>
-    <span id="holders">Loading...</span>
+    <div class="stat" id="holders">Loading...</div>
   </div>
 </div>
 
@@ -218,7 +240,6 @@ footer{
 
 </div>
 
-<!-- Phantom modal -->
 <div id="phantomModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.8);justify-content:center;align-items:center;">
   <div style="background:#111;padding:25px;border-radius:15px;max-width:380px;color:#fff;">
     <h3>Phantom required</h3>
@@ -294,17 +315,18 @@ async function getBalances(){
   if(!publicKey) return;
   const balance = await connection.getBalance(publicKey);
   solBalance.innerText = (balance / solanaWeb3.LAMPORTS_PER_SOL).toFixed(4);
+  tokenBalance.innerText = tokenBalance.innerText;
+  usdValue.innerText = ((parseFloat(tokenBalance.innerText)||0) * lastPrice).toFixed(2);
 
-  const tokenAccounts = await connection.getParsedTokenAccountsByOwner(
-    publicKey, { mint: new solanaWeb3.PublicKey(TOKEN_MINT) }
-  );
-
-  let tokenAmount = 0;
-  if(tokenAccounts.value.length > 0){
-    tokenAmount = tokenAccounts.value[0].account.data.parsed.info.tokenAmount.uiAmount;
-  }
-  tokenBalance.innerText = tokenAmount ?? 0;
-  usdValue.innerText = ((tokenAmount||0) * lastPrice).toFixed(2);
+  // Pulse effect when balances update
+  document.querySelector(".wallet-sol").classList.add("pulse");
+  document.querySelector(".wallet-brn").classList.add("pulse");
+  document.querySelector(".wallet-usd").classList.add("pulse");
+  setTimeout(()=>{
+    document.querySelector(".wallet-sol").classList.remove("pulse");
+    document.querySelector(".wallet-brn").classList.remove("pulse");
+    document.querySelector(".wallet-usd").classList.remove("pulse");
+  },600);
 }
 
 async function fetchTokenData(){
@@ -313,14 +335,27 @@ async function fetchTokenData(){
     const data = await res.json();
     const pair = data.pairs.find(p => p.pairAddress === PAIR_ADDRESS) || data.pairs[0];
     lastPrice = parseFloat(pair.priceUsd) || 0;
-    price.innerText = lastPrice.toFixed(6);
-    marketcap.innerText = pair.fdv ? parseFloat(pair.fdv).toLocaleString() : "N/A";
-    holders.innerText = pair.holders ? pair.holders.toLocaleString() : "N/A";
+    
+    const priceEl = document.getElementById("price");
+    const fdvEl = document.getElementById("marketcap");
+    const holdersEl = document.getElementById("holders");
+
+    // Update values
+    priceEl.innerText = lastPrice.toFixed(6);
+    fdvEl.innerText = pair.fdv ? parseFloat(pair.fdv).toLocaleString() : "N/A";
+    holdersEl.innerText = pair.holders ? pair.holders.toLocaleString() : "N/A";
+
+    // Pulse effect
+    priceEl.classList.add("pulse");
+    fdvEl.classList.add("pulse");
+    holdersEl.classList.add("pulse");
+    setTimeout(()=>{ priceEl.classList.remove("pulse"); fdvEl.classList.remove("pulse"); holdersEl.classList.remove("pulse"); },600);
+
     if(publicKey) getBalances();
   }catch{
-    price.innerText="N/A";
-    marketcap.innerText="N/A";
-    holders.innerText="N/A";
+    document.getElementById("price").innerText="N/A";
+    document.getElementById("marketcap").innerText="N/A";
+    document.getElementById("holders").innerText="N/A";
   }
 }
 
@@ -328,6 +363,33 @@ setInterval(fetchTokenData,15000);
 fetchTokenData();
 
 function installPhantom(){ window.open("https://phantom.app/","_blank"); }
+
+/* Particle Background Effect */
+const canvas = document.getElementById('bgCanvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+let stars = [];
+for(let i=0;i<150;i++){
+  stars.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, r:Math.random()*1.5+0.5, dx:(Math.random()-0.5)*0.2, dy:(Math.random()-0.5)*0.2});
+}
+function animateStars(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  for(let s of stars){
+    ctx.beginPath();
+    ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+    ctx.fillStyle='rgba(255,255,255,0.7)';
+    ctx.fill();
+    s.x+=s.dx;
+    s.y+=s.dy;
+    if(s.x<0)s.x=canvas.width;
+    if(s.x>canvas.width)s.x=0;
+    if(s.y<0)s.y=canvas.height;
+    if(s.y>canvas.height)s.y=0;
+  }
+  requestAnimationFrame(animateStars);
+}
+animateStars();
 </script>
 
 </body>
