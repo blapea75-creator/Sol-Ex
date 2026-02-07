@@ -23,14 +23,14 @@ body{
   margin:0;
   font-family:Arial, Helvetica, sans-serif;
   text-align:center;
-  background:var(--bg-dark) url('logo.png') no-repeat center top;
-  background-size:150px 150px;
+  background:var(--bg-dark) url('logo.png') no-repeat center 120px; /* lower logo */
+  background-size:180px 180px; /* adjust logo size */
   color:var(--text-light);
   overflow-x:hidden;
 }
 
 .wrapper{
-  padding:200px 20px 20px 20px; /* space for logo */
+  padding:250px 20px 20px 20px; /* more space below the logo */
   max-width:1100px;
   margin:auto;
   position:relative;
@@ -121,7 +121,6 @@ h1{
   100%{transform:rotate(360deg);}
 }
 
-/* regular glow animation */
 .balance-glow{
   color:#0ff;
   font-size:1.3rem;
@@ -136,7 +135,6 @@ h1{
   100%{text-shadow:0 0 10px #0ff,0 0 20px #0ff;}
 }
 
-/* extra neon pulse on update */
 @keyframes neonFlash{
   0%{text-shadow:0 0 10px #0ff,0 0 20px #0ff;}
   50%{text-shadow:0 0 25px #0ff,0 0 50px #0ff;}
@@ -299,20 +297,14 @@ async function fetchTokenData(){
     let newFDV=parseFloat(pair.fdv)||0;
     let newHolders=pair.holders||0;
 
-    // add neon flash if price changed
-    if(newPrice!==lastPrice){
-      price.classList.add("neonFlash");
-      setTimeout(()=>price.classList.remove("neonFlash"),500);
-    }
-    if(newFDV!==lastFDV){ marketcap.classList.add("neonFlash"); setTimeout(()=>marketcap.classList.remove("neonFlash"),500); }
-    if(newHolders!==lastHolders){ holders.classList.add("neonFlash"); setTimeout(()=>holders.classList.remove("neonFlash"),500); }
+    if(newPrice!==lastPrice){ price.classList.add("neonFlash"); setTimeout(()=>price.classList.remove("neonFlash"),500);}
+    if(newFDV!==lastFDV){ marketcap.classList.add("neonFlash"); setTimeout(()=>marketcap.classList.remove("neonFlash"),500);}
+    if(newHolders!==lastHolders){ holders.classList.add("neonFlash"); setTimeout(()=>holders.classList.remove("neonFlash"),500);}
 
     lastPrice=newPrice; lastFDV=newFDV; lastHolders=newHolders;
-
     price.innerText=lastPrice.toFixed(6);
     marketcap.innerText=lastFDV.toLocaleString();
     holders.innerText=lastHolders.toLocaleString();
-
     if(publicKey) getBalances();
   }catch{ price.innerText="N/A"; marketcap.innerText="N/A"; holders.innerText="N/A"; }
 }
