@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Bronin Token 🚀</title>
+
+<script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<style>
+:root{
+  --primary:#00aaff;
+  --green:#16c784;
+  --red:#ff4d4d;
+  --orange:#ff9900;
+  --bg-light:#e6f7ff;
+  --bg-dark:#0e0e0e;
+  --text-light:#111;
+  --text-dark:#eee;
+  --card-light:#fff;
+  --card-dark:#1e1e1e;
+}
+
+body{
+  margin:0;
+  font-family:Arial, Helvetica, sans-serif;
+  text-align:center;
+  background:radial-gradient(circle at top,var(--bg-light),#ffffff 60%);
+  color:var(--text-light);
+  transition: all 0.3s ease;
+}
+
+body.dark{
+  background:radial-gradient(circle at top,var(--bg-dark),#111 60%);
+  color:var(--text-dark);
+}
+
+.wrapper{
+  padding:20px;
+  max-width:1100px;
+  margin:auto;
+}
+
+h1{
+  font-size:2.7rem;
+  margin-bottom:5px;
+  animation:pump 1.5s infinite alternate;
+}
+
+@keyframes pump{
+  from{transform:scale(1);}
+  to{transform:scale(1.07);}
+}
+
+.tagline{
+  opacity:.7;
+  margin-bottom:20px;
+}
+
+.card{
+  background:var(--card-light);
+  border-radius:16px;
+  padding:18px;
+  margin:12px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.08);
+  transition: all 0.3s ease;
+}
+
+body.dark .card{
+  background:var(--card-dark);
+  box-shadow:0 10px 25px rgba(0,0,0,0.3);
+}
+
+.flex{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+}
+
+.stat{
+  font-weight:bold;
+  margin:6px 0;
+}
+
+.wallet-btn{
+  padding:12px 22px;
+  border:none;
+  border-radius:40px;
+  font-weight:bold;
+  cursor:pointer;
+  margin:6px;
+  color:white;
+  transition:.2s;
+}
+
+.wallet-btn:hover{ transform:scale(1.06); }
+
+.buy{ background:var(--green); }
+.sell{ background:#888; }
+.toggle-btn{
+  position:fixed;
+  top:12px;
+  right:12px;
+  padding:8px 12px;
+  border:none;
+  border-radius:12px;
+  cursor:pointer;
+  font-weight:bold;
+  z-index:999;
+  background:#444;
+  color:white;
+}
+
+.address{
+  font-size:.9rem;
+  opacity:.75;
+  word-break:break-all;
+}
+
+.small{
+  font-size:.85rem;
+  opacity:.7;
+}
+
+.loader{
+  border:6px solid #f3f3f3;
+  border-top:6px solid var(--primary);
+  border-radius:50%;
+  width:32px;
+  height:32px;
+  animation:spin 1s linear infinite;
+  margin:10px auto;
+}
+
+@keyframes spin{
+  0%{transform:rotate(0deg);}
+  100%{transform:rotate(360deg);}
+}
+
+footer{
+  margin-top:30px;
+  padding:20px;
+  font-size:.9rem;
+  opacity:.7;
+}
+</style>
+</head>
+<body>
+
+<button class="toggle-btn" onclick="toggleDarkMode()">🌙</button>
+
+<div class="wrapper">
+
+<h1>BRO's!</h1>
+<div class="tagline">We are Bro's. We are BRONIN!.</div>
+
+<div class="flex">
+
+  <div class="card" style="min-width:250px;">
+    <div class="stat">Price</div>
+    $<span id="price">Loading...</span>
+  </div>
+
+  <div class="card" style="min-width:250px;">
+    <div class="stat">FDV</div>
+    $<span id="marketcap">Loading...</span>
+  </div>
+
+  <div class="card" style="min-width:250px;">
+    <div class="stat">BRO-lders</div>
+    <span id="holders">Loading...</span>
+  </div>
+
+</div>
+
+<div class="card">
+  <button class="wallet-btn buy" id="buyBtn" target="_blank">
+    Buy on Pump.Fun
+  </button>
+</div>
+
+<div class="card">
+
+  <button id="connectBtn" class="wallet-btn" onclick="connectWallet()">
+    Connect Phantom
+  </button>
+
+  <button id="disconnectBtn" class="wallet-btn" onclick="disconnectWallet()" style="display:none;background:var(--red);">
+    Disconnect
+  </button>
+
+  <div id="spinner" style="display:none;">
+    <div class="loader"></div>
+  </div>
+
+  <div id="walletInfo" style="display:none;margin-top:10px;">
+    <div class="small">Connected</div>
+    <div id="walletAddress"></div>
+    <hr>
+    <div>SOL: <strong id="solBalance">0</strong></div>
+    <div>BRN: <strong id="tokenBalance">0</strong></div>
+    <div>Value: $<strong id="usdValue">0</strong></div>
+  </div>
+
+</div>
+
+<div class="card">
+  <h2>📈 Chart</h2>
+  <iframe
+    id="chartFrame"
+    width="100%"
+    height="420"
+    style="border:0;border-radius:12px;">
+  </iframe>
+</div>
+
+<footer>
+© 2026 Bronin Token • Buy Responsibly 😎
+</footer>
+
+</div>
+
+<!-- Phantom modal -->
+<div id="phantomModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);justify-content:center;align-items:center;">
+  <div style="background:white;padding:25px;border-radius:15px;max-width:380px;">
+    <h3>Phantom required</h3>
+    <p>Install Phantom wallet to continue.</p>
+    <button class="wallet-btn" onclick="installPhantom()">Install</button>
+  </div>
+</div>
+
+<script>
+/* ============================
+REPLACE BEFORE GOING LIVE
+============================ */
+const TOKEN_MINT = J4Db1dSx5qkhghjbzNXarMyQ2KirijJGGFb9h9jzpump;
+
+// Dark Mode Toggle
+function toggleDarkMode(){
+  document.body.classList.toggle("dark");
+  const btn = document.querySelector(".toggle-btn");
+  if(document.body.classList.contains("dark")){
+    btn.innerText = "☀️";
+  } else {
+    btn.innerText = "🌙";
+  }
+}
+
+// Buy button link to Pump.Fun
+document.getElementById("buyBtn").onclick = () =>
+  window.open(`https://pump.fun/coin/J4Db1dSx5qkhghjbzNXarMyQ2KirijJGGFb9h9jzpump-${TOKEN_MINT}`, "_blank");
+
+// Dex chart
+document.getElementById("chartFrame").src =
+  `https://dexscreener.com/solana/${PAIR_ADDRESS}?embed=1&theme=light`;
+
+const connection = new solanaWeb3.Connection(
+  solanaWeb3.clusterApiUrl("mainnet-beta"),
+  "confirmed"
+);
+
+let provider;
+let publicKey;
+let lastPrice = 0;
+
+function shortenAddress(a){
+  return a.slice(0,4) + "..." + a.slice(-4);
+}
+
+async function connectWallet(){
+  if(!(window.solana && window.solana.isPhantom)){
+    showInstallPopup();
+    return;
+  }
+
+  provider = window.solana;
+  document.getElementById("spinner").style.display = "block";
+
+  try{
+    const resp = await provider.connect();
+    publicKey = resp.publicKey;
+    updateUIConnected();
+    confetti({particleCount:120,spread:80,origin:{y:0.6}});
+    getBalances();
+  }catch(e){}
+
+  document.getElementById("spinner").style.display = "none";
+}
+
+function updateUIConnected(){
+  connectBtn.style.display="none";
+  disconnectBtn.style.display="inline-block";
+  walletInfo.style.display="block";
+  walletAddress.innerText = shortenAddress(publicKey.toString());
+}
+
+async function disconnectWallet(){
+  if(provider) await provider.disconnect();
+  publicKey=null;
+  connectBtn.style.display="inline-block";
+  disconnectBtn.style.display="none";
+  walletInfo.style.display="none";
+}
+
+async function autoConnect(){
+  if(window.solana && window.solana.isPhantom){
+    provider = window.solana;
+    try{
+      const r = await provider.connect({onlyIfTrusted:true});
+      if(r.publicKey){
+        publicKey=r.publicKey;
+        updateUIConnected();
+        getBalances();
+      }
+    }catch{}
+  }
+}
+
+window.addEventListener("load", autoConnect);
+
+async function getBalances(){
+  if(!publicKey) return;
+
+  const balance = await connection.getBalance(publicKey);
+  solBalance.innerText = (balance / solanaWeb3.LAMPORTS_PER_SOL).toFixed(4);
+
+  const tokenAccounts = await connection.getParsedTokenAccountsByOwner(
+    publicKey,
+    { mint: new solanaWeb3.PublicKey(TOKEN_MINT) }
+  );
+
+  let tokenAmount = 0;
+  if(tokenAccounts.value.length > 0){
+    tokenAmount = tokenAccounts.value[0].account.data.parsed.info.tokenAmount.uiAmount;
+  }
+
+  tokenBalance.innerText = tokenAmount ?? 0;
+  usdValue.innerText = ((tokenAmount||0) * lastPrice).toFixed(2);
+}
+
+async function fetchTokenData(){
+  try{
+    const res = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${TOKEN_MINT}`);
+    const data = await res.json();
+    const pair = data.pairs[0];
+
+    lastPrice = parseFloat(pair.priceUsd) || 0;
+
+    price.innerText = lastPrice ? lastPrice.toFixed(6) : "0";
+    marketcap.innerText = pair.fdv ? parseFloat(pair.fdv).toLocaleString() : "N/A";
+    holders.innerText = pair.holders ? pair.holders.toLocaleString() : "N/A";
+
+    if(publicKey) getBalances();
+
+  }catch{
+    price.innerText="N/A";
+    marketcap.innerText="N/A";
+    holders.innerText="N/A";
+  }
+}
+
+setInterval(fetchTokenData,15000);
+fetchTokenData();
+
+function showInstallPopup(){
+  phantomModal.style.display="flex";
+}
+
+function installPhantom(){
+  window.open("https://phantom.app/","_blank");
+}
+</script>
+
+</body>
+</html>
