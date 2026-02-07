@@ -402,97 +402,6 @@ setInterval(()=>{ if(provider && provider.isConnected===false) disconnectWallet(
   font-size:1rem;
   font-weight:bold;
   color: var(--wallet-text);
-  text-shadow:0 0 5px var(--wallet-glow),0 0 10px var(--wallet-glow);
-  word-break:break-all;
-}
-
-.small{
-  font-size:.85rem;
-  opacity:.7;
-}
-
-.loader{
-  border:6px solid #222;
-  border-top:6px solid var(--wallet-glow);
-  border-radius:50%;
-  width:32px;
-  height:32px;
-  animation:spin 1s linear infinite;
-  margin:10px auto;
-}
-
-@keyframes spin{
-  0%{transform:rotate(0deg);}
-  100%{transform:rotate(360deg);}
-}
-
-.balance-glow{
-  color:var(--red);
-  font-size:1.3rem;
-  font-weight:bold;
-  text-shadow:0 0 10px var(--red),0 0 20px var(--green),0 0 30px var(--red);
-  animation: glowPulse 2s infinite alternate;
-}
-
-@keyframes glowPulse{
-  0%{ text-shadow:0 0 10px var(--red),0 0 20px var(--green);}
-  50%{ text-shadow:0 0 25px var(--red),0 0 50px var(--green);}
-  100%{ text-shadow:0 0 10px var(--red),0 0 20px var(--green);}
-}
-
-/* Wallet UI glow (violet) */
-.balance-glow-wallet {
-  color: var(--wallet-text);
-  font-weight:bold;
-  font-size:1.3rem;
-  text-shadow:0 0 10px var(--wallet-glow),0 0 20px var(--wallet-glow),0 0 30px #e6ccff;
-  animation: glowPulseWallet 2s infinite alternate;
-}
-
-@keyframes glowPulseWallet {
-  0%{ text-shadow:0 0 10px var(--wallet-glow),0 0 20px var(--wallet-glow);}
-  50%{ text-shadow:0 0 25px #e6ccff,0 0 50px var(--wallet-glow);}
-  100%{ text-shadow:0 0 10px var(--wallet-glow),0 0 20px #e6ccff;}
-}
-
-#walletInfo hr {
-  border-color: #c4a3ff44;
-}
-
-/* X Logo link */
-#socialX{
-  position:fixed;
-  bottom:12px;
-  left:50%;
-  transform:translateX(-50%);
-  z-index:10;
-  background:#0ff11a1a;
-  padding:8px 16px;
-  border-radius:12px;
-  font-weight:bold;
-  font-size:1.5rem;
-  text-decoration:none;
-  color:#0ff;
-  text-shadow:0 0 5px #0ff,0 0 10px #0ff;
-  transition:.3s;
-}
-#socialX:hover{
-  transform:translateX(-50%) scale(1.2);
-  background:#0ff22aa0;
-  text-shadow:0 0 15px #0ff,0 0 30px #0ff;
-}
-
-.footer{
-  margin-top:20px;
-  padding:20px;
-  font-size:.9rem;
-  opacity:.7;
-  text-shadow:0 0 5px var(--green);
-}
-</style>
-</head>
-<body>
-
 <canvas id="stars"></canvas>
 
 <div class="wrapper">
@@ -663,4 +572,5 @@ setInterval(()=>{ if(provider && provider.isConnected===false) disconnectWallet(
 
 </body>
 </html>
+
 
