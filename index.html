@@ -229,7 +229,7 @@ footer{
 
 <script>
 const TOKEN_MINT = "J4Db1dSx5qkhghjbzNXarMyQ2KirijJGGFb9h9jzpump"; 
-const PAIR_ADDRESS = "J4Db1dSx5qkhghjbzNXarMyQ2KirijJGGFb9h9jzpump"; 
+const PAIR_ADDRESS = "45sspkuqs1ssbedqxd2mzrmdjyaxf7gyqyhs5xdxuwc5"; 
 
 document.getElementById("buyBtn").onclick = () => {
   window.open(`https://pump.fun/coin/${TOKEN_MINT}`, "_blank");
@@ -309,7 +309,7 @@ async function getBalances(){
 
 async function fetchTokenData(){
   try{
-    const res = await fetch(`https://pump.fun/coin/J4Db1dSx5qkhghjbzNXarMyQ2KirijJGGFb9h9jzpump/${TOKEN_MINT}`);
+    const res = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${TOKEN_MINT}`);
     const data = await res.json();
     const pair = data.pairs.find(p => p.pairAddress === PAIR_ADDRESS) || data.pairs[0];
     lastPrice = parseFloat(pair.priceUsd) || 0;
