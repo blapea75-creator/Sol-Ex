@@ -13,10 +13,9 @@
   --primary:#00ffff;
   --green:#16c784;
   --red:#ff4d4d;
-  --orange:#ff9900;
-  --bg-dark:#0b0b1a;
   --card-dark:#1a1a2e;
   --text-light:#eee;
+  --bg-dark:#0b0b1a;
 }
 
 body{
@@ -39,14 +38,8 @@ body{
   z-index:0;
 }
 
-@keyframes bannerGlow{
-  0%{ text-shadow:0 0 10px #0ff,0 0 20px #0ff; }
-  50%{ text-shadow:0 0 25px #0ff,0 0 50px #0ff; }
-  100%{ text-shadow:0 0 10px #0ff,0 0 20px #0ff; }
-}
-
 .wrapper{
-  padding:180px 20px 20px 20px; /* top padding adjusted for banner */
+  padding:20px;
   max-width:1100px;
   margin:auto;
   position:relative;
@@ -151,7 +144,7 @@ h1{
   100%{ text-shadow:0 0 10px #0ff,0 0 20px #0ff;}
 }
 
-/* X link at bottom */
+/* X link fixed at bottom */
 #socialX{
   position:fixed;
   bottom:12px;
@@ -162,14 +155,14 @@ h1{
   padding:8px 16px;
   border-radius:12px;
   font-weight:bold;
-  font-size:1.1rem;
+  font-size:1.5rem;
   text-decoration:none;
   color:#0ff;
   text-shadow:0 0 5px #0ff,0 0 10px #0ff;
   transition:.3s;
 }
 #socialX:hover{
-  transform:translateX(-50%) scale(1.1);
+  transform:translateX(-50%) scale(1.2);
   background:#0ff22aa0;
   text-shadow:0 0 15px #0ff,0 0 30px #0ff;
 }
@@ -187,7 +180,8 @@ h1{
 
 <canvas id="stars"></canvas>
 
-<!-- Page Banner -->
+<div class="wrapper">
+
 <h1>BRO's!</h1>
 <div class="tagline">We are Bro's. We are BRONIN!</div>
 
@@ -226,6 +220,7 @@ h1{
     <hr>
     <div>SOL: <strong id="solBalance" class="balance-glow">0</strong></div>
     <div>BRN: <strong id="tokenBalance" class="balance-glow">0</strong></div>
+    <div>Value: $<strong id="usdValue" class="balance-glow">0</strong></div>
   </div>
 </div>
 
@@ -233,19 +228,11 @@ h1{
 © 2026 Bronin Token • Buy Responsibly 😎
 </footer>
 
-<!-- Social X link -->
-<a id="socialX" href="https://x.com/Only_BRONin" target="_blank">Follow us on X 🐦</a>
-
-<div id="phantomModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.8);justify-content:center;align-items:center;">
-  <div style="background:#111;padding:25px;border-radius:15px;max-width:380px;color:#0ff;">
-    <h3>Phantom required</h3>
-    <p>Install Phantom wallet to continue.</p>
-    <button class="wallet-btn" onclick="installPhantom()">Install</button>
-  </div>
-</div>
+<!-- X Logo link -->
+<a id="socialX" href="https://x.com/Only_BRONin" target="_blank">X</a>
 
 <script>
-const TOKEN_MINT = "J4Db1dSx5qkhghjbzNXarMyQ2KirijJGGFb9h9jzpump"; 
+const TOKEN_MINT = "YOUR_BRONIN_SOLANA_TOKEN_ADDRESS"; 
 const PUMP_FUN = "https://pump.fun/coin/J4Db1dSx5qkhghjbzNXarMyQ2KirijJGGFb9h9jzpump"; 
 let lastPrice = 0, lastFDV = 0, lastHolders = 0;
 const connection = new solanaWeb3.Connection(solanaWeb3.clusterApiUrl("mainnet-beta"), "confirmed");
@@ -257,7 +244,7 @@ function shortenAddress(a){ return a.slice(0,4)+"..."+a.slice(-4); }
 function resetDisconnectTimer(){ if(disconnectTimeout) clearTimeout(disconnectTimeout); disconnectTimeout=setTimeout(disconnectWallet,120000); }
 
 async function connectWallet(){
-  if(!(window.solana && window.solana.isPhantom)){ showInstallPopup(); return; }
+  if(!(window.solana && window.solana.isPhantom)){ alert("Install Phantom!"); return; }
   provider=window.solana;
   document.getElementById("spinner").style.display="block";
   try{
@@ -331,9 +318,6 @@ async function fetchTokenData(){
 setInterval(fetchTokenData,15000);
 fetchTokenData();
 
-function showInstallPopup(){ phantomModal.style.display="flex"; }
-function installPhantom(){ window.open("https://phantom.app/","_blank"); }
-
 // stars background
 const canvas=document.getElementById("stars");
 const ctx=canvas.getContext("2d");
@@ -358,11 +342,9 @@ function animateStars(){
 }
 animateStars();
 
-// auto detect disconnect from Phantom
+// auto detect disconnect from Phantom plugin
 setInterval(()=>{ if(provider && provider.isConnected===false) disconnectWallet(); },3000);
 </script>
 
 </body>
 </html>
-
-
