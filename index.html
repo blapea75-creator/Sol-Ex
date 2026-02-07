@@ -10,86 +10,48 @@
 
 <style>
 :root{
-  --primary:#00ffff;
+  --primary:#00aaff;
   --green:#16c784;
   --red:#ff4d4d;
   --orange:#ff9900;
-  --bg-dark:#0b0b1a;
-  --card-dark:#1a1a2e;
-  --text-light:#eee;
+  --bg-dark:#0e0e0e;
+  --text-dark:#eee;
+  --card-dark:#1e1e1e;
 }
 
 body{
   margin:0;
   font-family:Arial, Helvetica, sans-serif;
   text-align:center;
-  background:var(--bg-dark);
-  color:var(--text-light);
+  background:radial-gradient(circle at top,var(--bg-dark),#111 60%);
+  color:var(--text-dark);
+  transition: all 0.3s ease;
   overflow-x:hidden;
-  position:relative;
-}
-
-/* Stars canvas full screen */
-#stars{
-  position:fixed;
-  top:0; left:0;
-  width:100%;
-  height:100%;
-  pointer-events:none;
-  z-index:0;
-}
-
-/* Page banner text */
-#banner{
-  width:100%;
-  height:180px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  position:relative;
-  z-index:1;
-  margin-top:20px;
-}
-
-#banner h1{
-  font-size:4rem;
-  color:#00ffff;
-  font-weight:bold;
-  text-shadow: 0 0 5px #00ffff, 0 0 20px #00ffff, 0 0 40px #00ffff;
-  animation: bannerPulse 2s infinite alternate;
-}
-
-@keyframes bannerPulse{
-  0%{ text-shadow: 0 0 10px #00ffff, 0 0 30px #00ffff, 0 0 50px #00ffff; transform:scale(1);}
-  50%{ text-shadow: 0 0 20px #00ffff, 0 0 50px #00ffff, 0 0 80px #00ffff; transform:scale(1.05);}
-  100%{ text-shadow: 0 0 10px #00ffff, 0 0 30px #00ffff, 0 0 50px #00ffff; transform:scale(1);}
 }
 
 .wrapper{
-  padding:220px 20px 20px 20px; /* top padding adjusted for banner */
+  padding:20px;
   max-width:1100px;
   margin:auto;
-  position:relative;
-  z-index:2;
 }
 
 h1{
   font-size:2.7rem;
   margin-bottom:5px;
   animation:pulse 1.5s infinite alternate;
-  text-shadow:0 0 10px #0ff, 0 0 20px #0ff, 0 0 30px #0ff;
+  color:#00aaff;
+  text-shadow:0 0 10px #00aaff,0 0 20px #00aaff;
 }
 
 @keyframes pulse{
-  0%{transform:scale(1);}
-  50%{transform:scale(1.08);}
-  100%{transform:scale(1);}
+  from{transform:scale(1);}
+  to{transform:scale(1.08);}
 }
 
 .tagline{
   opacity:.7;
   margin-bottom:20px;
-  text-shadow:0 0 5px #0ff;
+  color:#0ff;
 }
 
 .card{
@@ -97,7 +59,7 @@ h1{
   border-radius:16px;
   padding:18px;
   margin:12px;
-  box-shadow:0 0 20px #00ffff88;
+  box-shadow:0 10px 25px rgba(0,0,0,0.3);
   transition: all 0.3s ease;
 }
 
@@ -110,7 +72,7 @@ h1{
 .stat{
   font-weight:bold;
   margin:6px 0;
-  font-size:1.2rem;
+  color:#0ff;
 }
 
 .wallet-btn{
@@ -124,16 +86,14 @@ h1{
   transition:.2s;
 }
 
-.wallet-btn:hover{ transform:scale(1.08); }
+.wallet-btn:hover{ transform:scale(1.06); }
 
-.buy{ background:var(--green); }
-.disconnect{ background:var(--red); }
+.buy{ background:#16c784; }
+.sell{ background:#888; }
 
 .address{
-  font-size:1rem;
-  font-weight:bold;
-  color:#0ff;
-  text-shadow:0 0 5px #0ff,0 0 10px #0ff;
+  font-size:.9rem;
+  opacity:.75;
   word-break:break-all;
 }
 
@@ -143,7 +103,7 @@ h1{
 }
 
 .loader{
-  border:6px solid #222;
+  border:6px solid #f3f3f3;
   border-top:6px solid var(--primary);
   border-radius:50%;
   width:32px;
@@ -157,90 +117,76 @@ h1{
   100%{transform:rotate(360deg);}
 }
 
-.balance-glow{
-  color:#0ff;
-  font-size:1.3rem;
-  font-weight:bold;
-  text-shadow:0 0 10px #0ff,0 0 20px #0ff,0 0 30px #0ff;
-  animation: glowPulse 2s infinite alternate;
-}
-
-@keyframes glowPulse{
-  0%{ text-shadow:0 0 10px #0ff,0 0 20px #0ff;}
-  50%{ text-shadow:0 0 25px #0ff,0 0 50px #0ff;}
-  100%{ text-shadow:0 0 10px #0ff,0 0 20px #0ff;}
-}
-
-/* X link at bottom */
-#socialX{
-  position:fixed;
-  bottom:12px;
-  left:50%;
-  transform:translateX(-50%);
-  z-index:10;
-  background:#0ff11a1a;
-  padding:8px 16px;
-  border-radius:12px;
-  font-weight:bold;
-  font-size:1.1rem;
-  text-decoration:none;
-  color:#0ff;
-  text-shadow:0 0 5px #0ff,0 0 10px #0ff;
-  transition:.3s;
-}
-#socialX:hover{
-  transform:translateX(-50%) scale(1.1);
-  background:#0ff22aa0;
-  text-shadow:0 0 15px #0ff,0 0 30px #0ff;
-}
-
-.footer{
+footer{
   margin-top:30px;
   padding:20px;
   font-size:.9rem;
   opacity:.7;
-  text-shadow:0 0 5px #0ff;
+}
+
+/* X Logo fixed at bottom */
+#socialX{
+  position:fixed;
+  bottom:20px;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:9999;
+  font-weight:bold;
+  font-size:1.5rem;
+  color:#0ff;
+  text-shadow:0 0 5px #0ff,0 0 10px #0ff,0 0 20px #0ff;
+  text-decoration:none;
+  transition: all 0.3s ease;
+  pointer-events:auto;
+}
+
+#socialX:hover{
+  transform:translateX(-50%) scale(1.2);
+  text-shadow:0 0 15px #0ff,0 0 30px #0ff,0 0 50px #0ff;
 }
 </style>
 </head>
 <body>
 
-<canvas id="stars"></canvas>
-
-<!-- Banner with text -->
-<div id="banner">
-  <h1>BRONIN</h1>
-</div>
-
 <div class="wrapper">
 
-<h1>BRO's!</h1>
-<div class="tagline">We are Bro's. We are BRONIN!</div>
+<h1>BRONIN</h1>
+<div class="tagline">We are BRO's, We are BRONIN!.</div>
 
 <div class="flex">
+
   <div class="card" style="min-width:250px;">
     <div class="stat">Price</div>
-    $<span id="price" class="balance-glow">0</span>
+    $<span id="price">Loading...</span>
   </div>
 
   <div class="card" style="min-width:250px;">
     <div class="stat">FDV</div>
-    $<span id="marketcap" class="balance-glow">0</span>
+    $<span id="marketcap">Loading...</span>
   </div>
 
   <div class="card" style="min-width:250px;">
     <div class="stat">BRO-lders</div>
-    <span id="holders" class="balance-glow">0</span>
+    <span id="holders">Loading...</span>
   </div>
+
 </div>
 
 <div class="card">
-  <button class="wallet-btn buy" id="buyBtn">Buy on Pump.Fun</button>
+  <button class="wallet-btn buy" id="buyBtn">
+    Buy on Pump.Fun
+  </button>
 </div>
 
 <div class="card">
-  <button id="connectBtn" class="wallet-btn" onclick="connectWallet()">Connect Phantom</button>
-  <button id="disconnectBtn" class="wallet-btn disconnect" onclick="disconnectWallet()" style="display:none;">Disconnect</button>
+
+  <button id="connectBtn" class="wallet-btn" onclick="connectWallet()">
+    Connect Phantom
+  </button>
+
+  <button id="disconnectBtn" class="wallet-btn" onclick="disconnectWallet()" style="display:none;background:#ff4d4d;">
+    Disconnect
+  </button>
 
   <div id="spinner" style="display:none;">
     <div class="loader"></div>
@@ -248,52 +194,76 @@ h1{
 
   <div id="walletInfo" style="display:none;margin-top:10px;">
     <div class="small">Connected</div>
-    <div id="walletAddress" class="address"></div>
+    <div id="walletAddress"></div>
     <hr>
-    <div>SOL: <strong id="solBalance" class="balance-glow">0</strong></div>
-    <div>BRN: <strong id="tokenBalance" class="balance-glow">0</strong></div>
-    <div>Value: $<strong id="usdValue" class="balance-glow">0</strong></div>
+    <div>SOL: <strong id="solBalance">0</strong></div>
+    <div>BRN: <strong id="tokenBalance">0</strong></div>
+    <div>Value: $<strong id="usdValue">0</strong></div>
   </div>
+
 </div>
 
 <footer>
 © 2026 Bronin Token • Buy Responsibly 😎
 </footer>
 
-<!-- Social X link -->
-<a id="socialX" href="https://x.com/Only_BRONin" target="_blank">Follow us on X 🐦</a>
+<!-- X Logo link -->
+<a href="https://x.com/Only_BRONin" target="_blank" id="socialX">X</a>
+
+<!-- Phantom modal -->
+<div id="phantomModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);justify-content:center;align-items:center;">
+  <div style="background:#1e1e1e;padding:25px;border-radius:15px;max-width:380px;color:#0ff;">
+    <h3>Phantom required</h3>
+    <p>Install Phantom wallet to continue.</p>
+    <button class="wallet-btn" onclick="installPhantom()">Install</button>
+  </div>
+</div>
 
 <script>
-// Replace with your token mint address
-const TOKEN_MINT = "YOUR_BRONIN_SOLANA_TOKEN_ADDRESS"; 
-const PUMP_FUN = "https://pump.fun/coin/J4Db1dSx5qkhghjbzNXarMyQ2KirijJGGFb9h9jzpump"; 
-let lastPrice = 0, lastFDV = 0, lastHolders = 0;
-const connection = new solanaWeb3.Connection(solanaWeb3.clusterApiUrl("mainnet-beta"), "confirmed");
+/* ============================
+Replace with your token info
+============================ */
+const TOKEN_MINT = "J4Db1dSx5qkhghjbzNXarMyQ2KirijJGGFb9h9jzpump";
+const PAIR_ADDRESS = "45sspkuqs1ssbedqxd2mzrmdjyaxf7gyqyhs5xdxuwc5";
 
-let provider, publicKey, disconnectTimeout;
-document.getElementById("buyBtn").onclick = () => window.open(PUMP_FUN,"_blank");
+// Buy button link to Pump.Fun
+document.getElementById("buyBtn").onclick = () =>
+  window.open(`https://pump.fun/coin/${TOKEN_MINT}`, "_blank");
 
-function shortenAddress(a){ return a.slice(0,4)+"..."+a.slice(-4); }
-function resetDisconnectTimer(){ if(disconnectTimeout) clearTimeout(disconnectTimeout); disconnectTimeout=setTimeout(disconnectWallet,120000); }
+// Solana connection
+const connection = new solanaWeb3.Connection(
+  solanaWeb3.clusterApiUrl("mainnet-beta"),
+  "confirmed"
+);
+
+let provider;
+let publicKey;
+let lastPrice = 0;
+
+function shortenAddress(a){ return a.slice(0,4) + "..." + a.slice(-4); }
 
 async function connectWallet(){
-  if(!(window.solana && window.solana.isPhantom)){ alert("Install Phantom!"); return; }
-  provider=window.solana;
+  if(!(window.solana && window.solana.isPhantom)){
+    showInstallPopup();
+    return;
+  }
+  provider = window.solana;
+  document.getElementById("spinner").style.display = "block";
   try{
-    const resp=await provider.connect();
-    publicKey=resp.publicKey;
+    const resp = await provider.connect();
+    publicKey = resp.publicKey;
     updateUIConnected();
     confetti({particleCount:120,spread:80,origin:{y:0.6}});
     getBalances();
-    resetDisconnectTimer();
   }catch(e){}
+  document.getElementById("spinner").style.display = "none";
 }
 
 function updateUIConnected(){
   connectBtn.style.display="none";
   disconnectBtn.style.display="inline-block";
   walletInfo.style.display="block";
-  walletAddress.innerText=shortenAddress(publicKey.toString());
+  walletAddress.innerText = shortenAddress(publicKey.toString());
 }
 
 async function disconnectWallet(){
@@ -304,59 +274,65 @@ async function disconnectWallet(){
   walletInfo.style.display="none";
 }
 
-async function getBalances(){
-  if(!publicKey) return;
-  const balance=await connection.getBalance(publicKey);
-  solBalance.innerText=(balance/solanaWeb3.LAMPORTS_PER_SOL).toFixed(4);
-  const tokenAccounts=await connection.getParsedTokenAccountsByOwner(publicKey,{mint:new solanaWeb3.PublicKey(TOKEN_MINT)});
-  let tokenAmount=0;
-  if(tokenAccounts.value.length>0) tokenAmount=tokenAccounts.value[0].account.data.parsed.info.tokenAmount.uiAmount;
-  tokenBalance.innerText=tokenAmount??0;
-  usdValue.innerText=((tokenAmount||0)*lastPrice).toFixed(2);
+async function autoConnect(){
+  if(window.solana && window.solana.isPhantom){
+    provider = window.solana;
+    try{
+      const r = await provider.connect({onlyIfTrusted:true});
+      if(r.publicKey){
+        publicKey=r.publicKey;
+        updateUIConnected();
+        getBalances();
+      }
+    }catch{}
+  }
 }
 
-// Auto fetch token price
+window.addEventListener("load", autoConnect);
+
+async function getBalances(){
+  if(!publicKey) return;
+  const balance = await connection.getBalance(publicKey);
+  solBalance.innerText = (balance / solanaWeb3.LAMPORTS_PER_SOL).toFixed(4);
+  const tokenAccounts = await connection.getParsedTokenAccountsByOwner(
+    publicKey,
+    { mint: new solanaWeb3.PublicKey(TOKEN_MINT) }
+  );
+  let tokenAmount = 0;
+  if(tokenAccounts.value.length > 0){
+    tokenAmount = tokenAccounts.value[0].account.data.parsed.info.tokenAmount.uiAmount;
+  }
+  tokenBalance.innerText = tokenAmount ?? 0;
+  usdValue.innerText = ((tokenAmount||0) * lastPrice).toFixed(2);
+}
+
 async function fetchTokenData(){
   try{
-    const res=await fetch(`https://api.dexscreener.com/latest/dex/tokens/${TOKEN_MINT}`);
-    const data=await res.json();
-    const pair=data.pairs[0];
-    let newPrice=parseFloat(pair.priceUsd)||0;
-    let newFDV=parseFloat(pair.fdv)||0;
-    let newHolders=pair.holders||0;
-
-    lastPrice=newPrice; lastFDV=newFDV; lastHolders=newHolders;
-    price.innerText=lastPrice.toFixed(6);
-    marketcap.innerText=newFDV.toLocaleString();
-    holders.innerText=newHolders.toLocaleString();
+    const res = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${TOKEN_MINT}`);
+    const data = await res.json();
+    const pair = data.pairs[0];
+    lastPrice = parseFloat(pair.priceUsd) || 0;
+    price.innerText = lastPrice ? lastPrice.toFixed(6) : "0";
+    marketcap.innerText = pair.fdv ? parseFloat(pair.fdv).toLocaleString() : "N/A";
+    holders.innerText = pair.holders ? pair.holders.toLocaleString() : "N/A";
     if(publicKey) getBalances();
-  }catch{ price.innerText="N/A"; marketcap.innerText="N/A"; holders.innerText="N/A"; }
+    // Neon pulse on price update
+    price.parentElement.classList.remove("pulse");
+    void price.parentElement.offsetWidth;
+    price.parentElement.classList.add("pulse");
+  }catch{
+    price.innerText="N/A";
+    marketcap.innerText="N/A";
+    holders.innerText="N/A";
+  }
 }
 setInterval(fetchTokenData,15000);
 fetchTokenData();
 
-// Stars background
-const canvas=document.getElementById("stars");
-const ctx=canvas.getContext("2d");
-canvas.width=window.innerWidth; canvas.height=window.innerHeight;
-let stars=[];
-for(let i=0;i<150;i++){ stars.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, r:Math.random()*1.5+0.5, dx:(Math.random()-0.5)/2, dy:(Math.random()-0.5)/2}); }
-function animateStars(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  stars.forEach(s=>{
-    ctx.beginPath();
-    ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
-    ctx.fillStyle="cyan";
-    ctx.fill();
-    s.x+=s.dx; s.y+=s.dy;
-    if(s.x<0)s.x=canvas.width;
-    if(s.x>canvas.width)s.x=0;
-    if(s.y<0)s.y=canvas.height;
-    if(s.y>canvas.height)s.y=0;
-  });
-  requestAnimationFrame(animateStars);
-}
-animateStars();
+// Phantom modal
+function showInstallPopup(){ phantomModal.style.display="flex"; }
+function installPhantom(){ window.open("https://phantom.app/","_blank"); }
 </script>
+
 </body>
 </html>
