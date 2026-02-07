@@ -39,34 +39,31 @@ body{
   z-index:0;
 }
 
-/* Page banner text */
+/* Banner at top */
 #banner{
   width:100%;
-  height:180px;
+  height:150px;
+  background: linear-gradient(90deg, #00ffff33, #00ffffaa, #00ffff33);
   display:flex;
   align-items:center;
   justify-content:center;
-  position:relative;
-  z-index:1;
-  margin-top:20px;
-}
-
-#banner h1{
-  font-size:4rem;
-  color:#00ffff;
+  font-size:2rem;
   font-weight:bold;
-  text-shadow: 0 0 5px #00ffff, 0 0 20px #00ffff, 0 0 40px #00ffff;
-  animation: bannerPulse 2s infinite alternate;
+  color:#0ff;
+  text-shadow:0 0 10px #0ff, 0 0 20px #0ff, 0 0 30px #0ff;
+  animation: bannerGlow 3s infinite alternate;
+  z-index:1;
+  position:relative;
 }
 
-@keyframes bannerPulse{
-  0%{ text-shadow: 0 0 10px #00ffff, 0 0 30px #00ffff, 0 0 50px #00ffff; transform:scale(1);}
-  50%{ text-shadow: 0 0 20px #00ffff, 0 0 50px #00ffff, 0 0 80px #00ffff; transform:scale(1.05);}
-  100%{ text-shadow: 0 0 10px #00ffff, 0 0 30px #00ffff, 0 0 50px #00ffff; transform:scale(1);}
+@keyframes bannerGlow{
+  0%{ text-shadow:0 0 10px #0ff,0 0 20px #0ff; }
+  50%{ text-shadow:0 0 25px #0ff,0 0 50px #0ff; }
+  100%{ text-shadow:0 0 10px #0ff,0 0 20px #0ff; }
 }
 
 .wrapper{
-  padding:220px 20px 20px 20px; /* top padding adjusted for banner */
+  padding:180px 20px 20px 20px; /* top padding adjusted for banner */
   max-width:1100px;
   margin:auto;
   position:relative;
@@ -207,10 +204,8 @@ h1{
 
 <canvas id="stars"></canvas>
 
-<!-- Banner with text -->
-<div id="banner">
-  <h1>BRONIN</h1>
-</div>
+<!-- Page Banner -->
+<div id="banner">🌌 BRONIN TOKEN</div>
 
 <div class="wrapper">
 
@@ -263,8 +258,15 @@ h1{
 <!-- Social X link -->
 <a id="socialX" href="https://x.com/Only_BRONin" target="_blank">Follow us on X 🐦</a>
 
+<div id="phantomModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.8);justify-content:center;align-items:center;">
+  <div style="background:#111;padding:25px;border-radius:15px;max-width:380px;color:#0ff;">
+    <h3>Phantom required</h3>
+    <p>Install Phantom wallet to continue.</p>
+    <button class="wallet-btn" onclick="installPhantom()">Install</button>
+  </div>
+</div>
+
 <script>
-// Replace with your token mint address
 const TOKEN_MINT = "YOUR_BRONIN_SOLANA_TOKEN_ADDRESS"; 
 const PUMP_FUN = "https://pump.fun/coin/J4Db1dSx5qkhghjbzNXarMyQ2KirijJGGFb9h9jzpump"; 
 let lastPrice = 0, lastFDV = 0, lastHolders = 0;
@@ -277,8 +279,9 @@ function shortenAddress(a){ return a.slice(0,4)+"..."+a.slice(-4); }
 function resetDisconnectTimer(){ if(disconnectTimeout) clearTimeout(disconnectTimeout); disconnectTimeout=setTimeout(disconnectWallet,120000); }
 
 async function connectWallet(){
-  if(!(window.solana && window.solana.isPhantom)){ alert("Install Phantom!"); return; }
+  if(!(window.solana && window.solana.isPhantom)){ showInstallPopup(); return; }
   provider=window.solana;
+  document.getElementById("spinner").style.display="block";
   try{
     const resp=await provider.connect();
     publicKey=resp.publicKey;
@@ -287,6 +290,7 @@ async function connectWallet(){
     getBalances();
     resetDisconnectTimer();
   }catch(e){}
+  document.getElementById("spinner").style.display="none";
 }
 
 function updateUIConnected(){
@@ -304,6 +308,17 @@ async function disconnectWallet(){
   walletInfo.style.display="none";
 }
 
+async function autoConnect(){
+  if(window.solana && window.solana.isPhantom){
+    provider=window.solana;
+    try{
+      const r=await provider.connect({onlyIfTrusted:true});
+      if(r.publicKey){ publicKey=r.publicKey; updateUIConnected(); getBalances(); resetDisconnectTimer(); }
+    }catch{}
+  }
+}
+window.addEventListener("load", autoConnect);
+
 async function getBalances(){
   if(!publicKey) return;
   const balance=await connection.getBalance(publicKey);
@@ -315,7 +330,6 @@ async function getBalances(){
   usdValue.innerText=((tokenAmount||0)*lastPrice).toFixed(2);
 }
 
-// Auto fetch token price
 async function fetchTokenData(){
   try{
     const res=await fetch(`https://api.dexscreener.com/latest/dex/tokens/${TOKEN_MINT}`);
@@ -325,20 +339,28 @@ async function fetchTokenData(){
     let newFDV=parseFloat(pair.fdv)||0;
     let newHolders=pair.holders||0;
 
+    if(newPrice!==lastPrice){ price.classList.add("neonFlash"); setTimeout(()=>price.classList.remove("neonFlash"),500);}
+    if(newFDV!==lastFDV){ marketcap.classList.add("neonFlash"); setTimeout(()=>marketcap.classList.remove("neonFlash"),500);}
+    if(newHolders!==lastHolders){ holders.classList.add("neonFlash"); setTimeout(()=>holders.classList.remove("neonFlash"),500);}
+
     lastPrice=newPrice; lastFDV=newFDV; lastHolders=newHolders;
     price.innerText=lastPrice.toFixed(6);
-    marketcap.innerText=newFDV.toLocaleString();
-    holders.innerText=newHolders.toLocaleString();
+    marketcap.innerText=lastFDV.toLocaleString();
+    holders.innerText=lastHolders.toLocaleString();
     if(publicKey) getBalances();
   }catch{ price.innerText="N/A"; marketcap.innerText="N/A"; holders.innerText="N/A"; }
 }
 setInterval(fetchTokenData,15000);
 fetchTokenData();
 
-// Stars background
+function showInstallPopup(){ phantomModal.style.display="flex"; }
+function installPhantom(){ window.open("https://phantom.app/","_blank"); }
+
+// stars background
 const canvas=document.getElementById("stars");
 const ctx=canvas.getContext("2d");
-canvas.width=window.innerWidth; canvas.height=window.innerHeight;
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
 let stars=[];
 for(let i=0;i<150;i++){ stars.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, r:Math.random()*1.5+0.5, dx:(Math.random()-0.5)/2, dy:(Math.random()-0.5)/2}); }
 function animateStars(){
@@ -357,6 +379,10 @@ function animateStars(){
   requestAnimationFrame(animateStars);
 }
 animateStars();
+
+// auto detect disconnect from Phantom
+setInterval(()=>{ if(provider && provider.isConnected===false) disconnectWallet(); },3000);
 </script>
+
 </body>
 </html>
