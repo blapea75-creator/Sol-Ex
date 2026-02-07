@@ -205,7 +205,7 @@ h1{
 <canvas id="stars"></canvas>
 
 <!-- Page Banner -->
-<div id="banner">🌌 BRONIN TOKEN</div>
+<div id="banner">BRONIN TOKEN</div>
 
 <div class="wrapper">
 
@@ -247,7 +247,6 @@ h1{
     <hr>
     <div>SOL: <strong id="solBalance" class="balance-glow">0</strong></div>
     <div>BRN: <strong id="tokenBalance" class="balance-glow">0</strong></div>
-    <div>Value: $<strong id="usdValue" class="balance-glow">0</strong></div>
   </div>
 </div>
 
@@ -267,7 +266,7 @@ h1{
 </div>
 
 <script>
-const TOKEN_MINT = "YOUR_BRONIN_SOLANA_TOKEN_ADDRESS"; 
+const TOKEN_MINT = "J4Db1dSx5qkhghjbzNXarMyQ2KirijJGGFb9h9jzpump"; 
 const PUMP_FUN = "https://pump.fun/coin/J4Db1dSx5qkhghjbzNXarMyQ2KirijJGGFb9h9jzpump"; 
 let lastPrice = 0, lastFDV = 0, lastHolders = 0;
 const connection = new solanaWeb3.Connection(solanaWeb3.clusterApiUrl("mainnet-beta"), "confirmed");
@@ -386,3 +385,4 @@ setInterval(()=>{ if(provider && provider.isConnected===false) disconnectWallet(
 
 </body>
 </html>
+
