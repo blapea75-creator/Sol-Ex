@@ -231,11 +231,18 @@ footer{
 </div>
 
 <script>
-/* ============================
-REPLACE BEFORE GOING LIVE
-============================ */
-const TOKEN_MINT = "J4Db1dSx5qkhghjbzNXarMyQ2KirijJGGFb9h9jzpump";
+const TOKEN_MINT = "J4Db1dSx5qkhghjbzNXarMyQ2KirijJGGFb9h9jzpump"; 
 const PAIR_ADDRESS = "J4Db1dSx5qkhghjbzNXarMyQ2KirijJGGFb9h9jzpump-SOL";
+
+const connectBtn = document.getElementById("connectBtn");
+const disconnectBtn = document.getElementById("disconnectBtn");
+const walletInfo = document.getElementById("walletInfo");
+const walletAddress = document.getElementById("walletAddress");
+const solBalance = document.getElementById("solBalance");
+const tokenBalance = document.getElementById("tokenBalance");
+const usdValue = document.getElementById("usdValue");
+const chartFrame = document.getElementById("chartFrame");
+const phantomModal = document.getElementById("phantomModal");
 
 // Dark Mode Toggle
 function toggleDarkMode(){
@@ -255,8 +262,7 @@ document.getElementById("buyBtn").onclick = () =>
   window.open(`https://pump.fun/coin/${TOKEN_MINT}-SOL`, "_blank");
 
 // Dex chart default light mode
-document.getElementById("chartFrame").src =
-  `https://dexscreener.com/solana/${PAIR_ADDRESS}?embed=1&theme=light`;
+chartFrame.src = `https://dexscreener.com/solana/${PAIR_ADDRESS}?embed=1&theme=light`;
 
 const connection = new solanaWeb3.Connection(
   solanaWeb3.clusterApiUrl("mainnet-beta"),
@@ -273,7 +279,7 @@ function shortenAddress(a){
 
 async function connectWallet(){
   if(!(window.solana && window.solana.isPhantom)){
-    showInstallPopup();
+    phantomModal.style.display="flex";
     return;
   }
 
@@ -286,7 +292,7 @@ async function connectWallet(){
     updateUIConnected();
     confetti({particleCount:120,spread:80,origin:{y:0.6}});
     getBalances();
-  }catch(e){}
+  }catch(e){ console.error(e); }
 
   document.getElementById("spinner").style.display = "none";
 }
@@ -346,29 +352,25 @@ async function fetchTokenData(){
   try{
     const res = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${TOKEN_MINT}`);
     const data = await res.json();
-    const pair = data.pairs[0];
+    const pair = data.pairs.find(p => p.baseToken.address===TOKEN_MINT) || data.pairs[0];
 
     lastPrice = parseFloat(pair.priceUsd) || 0;
 
-    price.innerText = lastPrice ? lastPrice.toFixed(6) : "0";
-    marketcap.innerText = pair.fdv ? parseFloat(pair.fdv).toLocaleString() : "N/A";
-    holders.innerText = pair.holders ? pair.holders.toLocaleString() : "N/A";
+    document.getElementById("price").innerText = lastPrice ? lastPrice.toFixed(6) : "0";
+    document.getElementById("marketcap").innerText = pair.fdv ? parseFloat(pair.fdv).toLocaleString() : "N/A";
+    document.getElementById("holders").innerText = pair.holders ? pair.holders.toLocaleString() : "N/A";
 
     if(publicKey) getBalances();
 
   }catch{
-    price.innerText="N/A";
-    marketcap.innerText="N/A";
-    holders.innerText="N/A";
+    document.getElementById("price").innerText="N/A";
+    document.getElementById("marketcap").innerText="N/A";
+    document.getElementById("holders").innerText="N/A";
   }
 }
 
 setInterval(fetchTokenData,15000);
 fetchTokenData();
-
-function showInstallPopup(){
-  phantomModal.style.display="flex";
-}
 
 function installPhantom(){
   window.open("https://phantom.app/","_blank");
