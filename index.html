@@ -10,8 +10,8 @@
 
 <style>
 :root{
-  --primary:#ff4d4d; /* red glow */
-  --green:#16c784;   /* green glow */
+  --primary:#ff4d4d;
+  --green:#16c784;
   --red:#ff4d4d;
   --card-dark:#1a1a2e;
   --text-light:#eee;
@@ -34,7 +34,6 @@ body{
   text-align:center;
 }
 
-/* Stars canvas full screen */
 #stars{
   position:fixed;
   top:0; left:0;
@@ -59,7 +58,7 @@ h1{
   font-size:2.7rem;
   margin-bottom:5px;
   animation:pulse 1.5s infinite alternate;
-  text-shadow:0 0 10px var(--red), 0 0 20px var(--red), 0 0 30px var(--green);
+  text-shadow:0 0 10px var(--red),0 0 20px var(--red),0 0 30px var(--green);
 }
 
 @keyframes pulse{
@@ -103,6 +102,290 @@ h1{
   border-radius:40px;
   font-weight:bold;
   cursor:pointer;
+  margin:6px;
+  transition:.2s;
+  color: var(--wallet-text);
+  background: rgba(72,50,150,0.7);
+  text-shadow:0 0 5px var(--wallet-glow),0 0 10px var(--wallet-glow);
+}
+
+.wallet-btn:hover{ transform:scale(1.08); }
+
+.buy{ background:var(--green); color:white; text-shadow:0 0 10px var(--green);}
+.disconnect{ background:var(--red); color:white; text-shadow:0 0 10px var(--red);}
+
+.address{
+  font-size:1rem;
+  font-weight:bold;
+  color: var(--wallet-text);
+  text-shadow:0 0 5px var(--wallet-glow),0 0 10px var(--wallet-glow);
+  word-break:break-all;
+}
+
+.small{
+  font-size:.85rem;
+  opacity:.7;
+}
+
+.loader{
+  border:6px solid #222;
+  border-top:6px solid var(--wallet-glow);
+  border-radius:50%;
+  width:32px;
+  height:32px;
+  animation:spin 1s linear infinite;
+  margin:10px auto;
+}
+
+@keyframes spin{
+  0%{transform:rotate(0deg);}
+  100%{transform:rotate(360deg);}
+}
+
+.balance-glow{
+  color:var(--red);
+  font-size:1.3rem;
+  font-weight:bold;
+  text-shadow:0 0 10px var(--red),0 0 20px var(--green),0 0 30px var(--red);
+  animation: glowPulse 2s infinite alternate;
+}
+
+@keyframes glowPulse{
+  0%{ text-shadow:0 0 10px var(--red),0 0 20px var(--green);}
+  50%{ text-shadow:0 0 25px var(--red),0 0 50px var(--green);}
+  100%{ text-shadow:0 0 10px var(--red),0 0 20px var(--green);}
+}
+
+.balance-glow-wallet {
+  color: var(--wallet-text);
+  font-weight:bold;
+  font-size:1.3rem;
+  text-shadow:0 0 10px var(--wallet-glow),0 0 20px var(--wallet-glow),0 0 30px #e6ccff;
+  animation: glowPulseWallet 2s infinite alternate;
+}
+
+@keyframes glowPulseWallet {
+  0%{ text-shadow:0 0 10px var(--wallet-glow),0 0 20px var(--wallet-glow);}
+  50%{ text-shadow:0 0 25px #e6ccff,0 0 50px var(--wallet-glow);}
+  100%{ text-shadow:0 0 10px var(--wallet-glow),0 0 20px #e6ccff;}
+}
+
+#walletInfo hr {
+  border-color: #c4a3ff44;
+}
+
+#socialX{
+  position:fixed;
+  bottom:12px;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:10;
+  background:#0ff11a1a;
+  padding:8px 16px;
+  border-radius:12px;
+  font-weight:bold;
+  font-size:1.5rem;
+  text-decoration:none;
+  color:#0ff;
+  text-shadow:0 0 5px #0ff,0 0 10px #0ff;
+  transition:.3s;
+}
+#socialX:hover{
+  transform:translateX(-50%) scale(1.2);
+  background:#0ff22aa0;
+  text-shadow:0 0 15px #0ff,0 0 30px #0ff;
+}
+
+.footer{
+  margin-top:20px;
+  padding:20px;
+  font-size:.9rem;
+  opacity:.7;
+  text-shadow:0 0 5px var(--green);
+}
+</style>
+</head>
+<body>
+
+<canvas id="stars"></canvas>
+
+<div class="wrapper">
+
+<h1>BRO's!</h1>
+<div class="tagline">We are Bro's. We are BRONIN!</div>
+
+<div class="flex">
+  <div class="card" style="min-width:250px;">
+    <div class="stat">Price</div>
+    $<span id="price" class="balance-glow">0</span>
+  </div>
+
+  <div class="card" style="min-width:250px;">
+    <div class="stat">FDV</div>
+    $<span id="marketcap" class="balance-glow">0</span>
+  </div>
+
+  <div class="card" style="min-width:250px;">
+    <div class="stat">BRO-lders</div>
+    <span id="holders" class="balance-glow">0</span>
+  </div>
+</div>
+
+<div class="card">
+  <button class="wallet-btn buy" id="buyBtn">Buy on Pump.Fun</button>
+</div>
+
+<div class="card">
+  <button id="connectBtn" class="wallet-btn">Connect Phantom</button>
+  <button id="disconnectBtn" class="wallet-btn disconnect" style="display:none;">Disconnect</button>
+
+  <div id="spinner" style="display:none;">
+    <div class="loader"></div>
+  </div>
+
+  <div id="walletInfo" style="display:none;margin-top:10px;">
+    <div class="small">Connected</div>
+    <div id="walletAddress" class="address"></div>
+    <hr>
+    <div>SOL: <strong id="solBalance" class="balance-glow-wallet">0</strong></div>
+    <div>BRN: <strong id="tokenBalance" class="balance-glow-wallet">0</strong></div>
+    <div>Value: $<strong id="usdValue" class="balance-glow-wallet">0</strong></div>
+  </div>
+</div>
+
+<footer>
+© 2026 Bronin Token • Buy Responsibly 😎
+</footer>
+
+<a id="socialX" href="https://x.com/Only_BRONin" target="_blank">X</a>
+
+<script>
+const TOKEN_MINT = "YOUR_BRONIN_SOLANA_TOKEN_ADDRESS"; 
+const PUMP_FUN = "https://pump.fun/coin/J4Db1dSx5qkhghjbzNXarMyQ2KirijJGGFb9h9jzpump"; 
+let lastPrice = 0, lastFDV = 0, lastHolders = 0;
+const connection = new solanaWeb3.Connection(solanaWeb3.clusterApiUrl("mainnet-beta"), "confirmed");
+
+const connectBtn = document.getElementById("connectBtn");
+const disconnectBtn = document.getElementById("disconnectBtn");
+const walletInfo = document.getElementById("walletInfo");
+const walletAddress = document.getElementById("walletAddress");
+const solBalance = document.getElementById("solBalance");
+const tokenBalance = document.getElementById("tokenBalance");
+const usdValue = document.getElementById("usdValue");
+
+let provider, publicKey, disconnectTimeout;
+document.getElementById("buyBtn").onclick = () => window.open(PUMP_FUN,"_blank");
+
+function shortenAddress(a){ return a.slice(0,4)+"..."+a.slice(-4); }
+function resetDisconnectTimer(){ if(disconnectTimeout) clearTimeout(disconnectTimeout); disconnectTimeout=setTimeout(disconnectWallet,120000); }
+
+async function connectWallet(){
+  if(!(window.solana && window.solana.isPhantom)){ alert("Install Phantom!"); return; }
+  provider=window.solana;
+  document.getElementById("spinner").style.display="block";
+  try{
+    const resp=await provider.connect();
+    publicKey=resp.publicKey;
+    updateUIConnected();
+    confetti({particleCount:120,spread:80,origin:{y:0.6}});
+    getBalances();
+    resetDisconnectTimer();
+  }catch(e){}
+  document.getElementById("spinner").style.display="none";
+}
+
+connectBtn.onclick = connectWallet;
+
+function updateUIConnected(){
+  connectBtn.style.display="none";
+  disconnectBtn.style.display="inline-block";
+  walletInfo.style.display="block";
+  walletAddress.innerText = shortenAddress(publicKey.toString());
+}
+
+async function disconnectWallet(){
+  if(provider) await provider.disconnect();
+  publicKey=null;
+  connectBtn.style.display="inline-block";
+  disconnectBtn.style.display="none";
+  walletInfo.style.display="none";
+}
+
+disconnectBtn.onclick = disconnectWallet;
+
+async function autoConnect(){
+  if(window.solana && window.solana.isPhantom){
+    provider=window.solana;
+    try{
+      const r=await provider.connect({onlyIfTrusted:true});
+      if(r.publicKey){ publicKey=r.publicKey; updateUIConnected(); getBalances(); resetDisconnectTimer(); }
+    }catch{}
+  }
+}
+window.addEventListener("load", autoConnect);
+
+async function getBalances(){
+  if(!publicKey) return;
+  const balance=await connection.getBalance(publicKey);
+  solBalance.innerText=(balance/solanaWeb3.LAMPORTS_PER_SOL).toFixed(4);
+  const tokenAccounts=await connection.getParsedTokenAccountsByOwner(publicKey,{mint:new solanaWeb3.PublicKey(TOKEN_MINT)});
+  let tokenAmount=0;
+  if(tokenAccounts.value.length>0) tokenAmount=tokenAccounts.value[0].account.data.parsed.info.tokenAmount.uiAmount;
+  tokenBalance.innerText=tokenAmount??0;
+  usdValue.innerText=((tokenAmount||0)*lastPrice).toFixed(2);
+}
+
+async function fetchTokenData(){
+  try{
+    const res=await fetch(`https://api.dexscreener.com/latest/dex/tokens/${TOKEN_MINT}`);
+    const data=await res.json();
+    const pair=data.pairs[0];
+    let newPrice=parseFloat(pair.priceUsd)||0;
+    let newFDV=parseFloat(pair.fdv)||0;
+    let newHolders=pair.holders||0;
+
+    if(newPrice!==lastPrice){ price.classList.add("neonFlash"); setTimeout(()=>price.classList.remove("neonFlash"),500);}
+    if(newFDV!==lastFDV){ marketcap.classList.add("neonFlash"); setTimeout(()=>marketcap.classList.remove("neonFlash"),500);}
+    if(newHolders!==lastHolders){ holders.classList.add("neonFlash"); setTimeout(()=>holders.classList.remove("neonFlash"),500);}
+
+    lastPrice=newPrice; lastFDV=newFDV; lastHolders=newHolders;
+    price.innerText=lastPrice.toFixed(6);
+    marketcap.innerText=lastFDV.toLocaleString();
+    holders.innerText=lastHolders.toLocaleString();
+    if(publicKey) getBalances();
+  }catch{ price.innerText="N/A"; marketcap.innerText="N/A"; holders.innerText="N/A"; }
+}
+setInterval(fetchTokenData,15000);
+fetchTokenData();
+
+const canvas=document.getElementById("stars");
+const ctx=canvas.getContext("2d");
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+let stars=[];
+for(let i=0;i<150;i++){ stars.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, r:Math.random()*1.5+0.5, dx:(Math.random()-0.5)/2, dy:(Math.random()-0.5)/2}); }
+function animateStars(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  stars.forEach(s=>{
+    ctx.beginPath();
+    ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+    ctx.fillStyle="cyan";
+    ctx.fill();
+    s.x+=s.dx; s.y+=s.dy;
+    if(s.x<0)s.x=canvas.width;
+    if(s.x>canvas.width)s.x=0;
+    if(s.y<0)s.y=canvas.height;
+    if(s.y>canvas.height)s.y=0;
+  });
+  requestAnimationFrame(animateStars);
+}
+animateStars();
+
+setInterval(()=>{ if(provider && provider.isConnected===false) disconnectWallet(); },3000);
+</script>
+
+</body>
+</html>
   margin:6px;
   transition:.2s;
   color: var(--wallet-text);
@@ -380,3 +663,4 @@ setInterval(()=>{ if(provider && provider.isConnected===false) disconnectWallet(
 
 </body>
 </html>
+
