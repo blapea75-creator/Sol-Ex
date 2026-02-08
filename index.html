@@ -32,7 +32,7 @@
         .copy-btn:hover { background: #252525; border-color: var(--primary); }
 
         /* LAYOUT */
-        .main-layout { display: grid; grid-template-columns: 1fr 320px; height: calc(100vh - var(--header-h)); margin-top: var(--header-h); }
+        .main-layout { display: grid; grid-template-columns: 1fr 320px; height: calc(100vh - var(--header-h) - 40px); margin-top: var(--header-h); }
         .terminal-content { padding: 40px; overflow-y: auto; display: flex; flex-direction: column; align-items: center; }
 
         .container-box { max-width: 650px; width: 100%; text-align: center; }
@@ -69,6 +69,19 @@
         .social-row { margin-top: 30px; display: flex; justify-content: center; align-items: center; gap: 25px; }
         .social-row a { transition: 0.3s; display: flex; align-items: center; opacity: 0.6; }
         .social-row a:hover { transform: translateY(-3px); opacity: 1; }
+
+        /* FOOTER */
+        .footer {
+            position: fixed; bottom: 0; left: 0; width: 100%; height: 40px;
+            background: rgba(11, 11, 14, 0.95); border-top: 1px solid rgba(0, 255, 163, 0.2);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 1001; backdrop-filter: blur(10px);
+        }
+        .footer-text {
+            font-family: 'Space Grotesk'; font-size: 0.7rem; font-weight: 700;
+            letter-spacing: 3px; color: rgba(255, 255, 255, 0.6); text-transform: uppercase;
+        }
+        .footer-text span { color: var(--primary); }
     </style>
 </head>
 <body>
@@ -128,6 +141,10 @@
         </div>
     </div>
 </div>
+
+<footer class="footer">
+    <div class="footer-text">SOLEX <span>2026</span> • INVEST WISELY</div>
+</footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"></script>
