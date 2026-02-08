@@ -28,7 +28,8 @@
 
         .wallet-actions { display: flex; align-items: center; gap: 12px; }
         .balance-chip { background: rgba(0, 255, 163, 0.05); padding: 8px 16px; border-radius: 50px; font-size: 0.75rem; border: 1px solid rgba(0, 255, 163, 0.3); color: var(--primary); font-weight: 800; display: none; }
-        .copy-btn { background: #1a1a1a; border: 1px solid #333; color: white; padding: 8px 14px; border-radius: 8px; font-size: 0.65rem; cursor: pointer; display: none; text-transform: uppercase; font-weight: 700; transition: 0.2s; }
+        .copy-btn { background: #1a1a1a; border: 1px solid #333; color: white; padding: 8px 14px; border-radius: 50px; font-size: 0.65rem; cursor: pointer; display: none; text-transform: uppercase; font-weight: 700; transition: 0.2s; border: 1px solid rgba(255,255,255,0.1); }
+        .copy-btn:hover { background: #252525; border-color: var(--primary); }
 
         /* LAYOUT */
         .main-layout { display: grid; grid-template-columns: 1fr 240px; height: calc(100vh - var(--header-h)); margin-top: var(--header-h); }
@@ -49,21 +50,12 @@
         .btn-buy { background: var(--primary); color: #000; }
         .btn-dex { background: #ab9ff2; color: #000; }
         .btn-burn { background: var(--burn-red); color: #fff; width: 100%; margin-top: 15px; }
-        .btn-burn.disabled { background: #331111; color: #666; cursor: not-allowed; }
 
         /* BURN PORTAL */
         .burn-portal { background: var(--card-bg); padding: 30px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); text-align: left; margin-bottom: 25px; }
         .input-wrapper { position: relative; }
         input { width:100%; background:rgba(0,0,0,0.5); border:1px solid #333; padding:18px 70px 18px 15px; color:white; border-radius:12px; outline:none; font-family: 'monospace'; }
         .max-btn { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: rgba(0, 255, 163, 0.1); border: 1px solid var(--primary); color: var(--primary); padding: 5px 10px; border-radius: 6px; font-size: 0.7rem; font-weight: 800; cursor: pointer; transition: 0.2s; }
-
-        /* HISTORY TABLE */
-        .history-panel { width: 100%; background: rgba(255,255,255,0.02); border-radius: 20px; padding: 25px; text-align: left; border: 1px solid rgba(255,255,255,0.05); }
-        .history-title { font-family: 'Space Grotesk'; font-size: 0.75rem; color: var(--primary); letter-spacing: 2px; margin-bottom: 15px; border-bottom: 1px solid #222; padding-bottom: 8px; }
-        .history-table { width: 100%; border-collapse: collapse; font-size: 0.7rem; }
-        .history-table th { text-align: left; padding: 10px; color: #444; text-transform: uppercase; font-size: 0.6rem; }
-        .history-table td { padding: 12px 10px; border-bottom: 1px solid #111; font-family: 'monospace'; color: #888; }
-        .tx-mini-link { color: var(--primary); text-decoration: none; }
 
         /* AUDIT LOG */
         .audit-sidebar { background: rgba(0, 0, 0, 0.6); border-left: 1px solid rgba(0, 255, 163, 0.1); padding: 15px; display: flex; flex-direction: column; backdrop-filter: blur(10px); }
@@ -76,14 +68,6 @@
 <body>
 
 <div id="vanta-canvas"></div>
-
-<div id="txModal">
-    <div style="background: #111; border: 1px solid var(--primary); padding: 40px; border-radius: 24px; text-align: center; max-width: 400px; width: 90%;">
-        <h2 style="font-family: 'Space Grotesk'; color: #fff;">BURN CONFIRMED</h2>
-        <p style="color:#888; margin-top:10px;">Token supply effectively reduced.</p>
-        <button class="btn btn-buy" onclick="document.getElementById('txModal').style.display='none'" style="margin-top:20px;">BACK</button>
-    </div>
-</div>
 
 <div class="header-bar">
     <a href="#" class="logo-link">SOLEX</a>
@@ -115,25 +99,15 @@
             <div class="burn-portal" id="burn-area" style="opacity: 0.3; pointer-events: none;">
                 <h3 style="font-family:'Space Grotesk'; color:var(--burn-red); margin-bottom:15px; font-size: 0.8rem;">INCINERATION MODULE</h3>
                 <div class="input-wrapper">
-                    <input type="number" id="burnAmount" placeholder="Amount to burn" oninput="checkBalance()">
+                    <input type="number" id="burnAmount" placeholder="Amount to burn">
                     <button class="max-btn" onclick="setMax()">MAX</button>
                 </div>
                 <button id="burnSubmit" class="btn btn-burn" onclick="executeBurn()">EXECUTE BURN 🔥</button>
             </div>
 
-            <div class="history-panel">
-                <div class="history-title">MY BURN RECORDS</div>
-                <table class="history-table">
-                    <tbody id="txHistoryBody"><tr><td colspan="3" style="text-align:center; padding:20px; color:#333;">NO LOCAL RECORDS FOUND</td></tr></tbody>
-                </table>
-            </div>
-
             <div style="margin-top: 30px; display: flex; justify-content: center; gap: 20px;">
-                <a href="https://x.com/solexterminal" target="_blank" style="text-decoration:none;">
+                <a href="https://x.com/solexterminal" target="_blank">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="white" style="opacity:0.6;"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                </a>
-                <a href="https://pump.fun/coin/J4Db1dSx5qkhghjbzNXarMyQ2KirijJGGFb9h9jzpump" target="_blank" style="text-decoration:none;">
-                    <img src="https://pump.fun/_next/image?url=%2Flogo.png&w=64&q=75" width="24" style="opacity:0.6; filter: grayscale(1);">
                 </a>
             </div>
         </div>
@@ -151,9 +125,43 @@
     VANTA.NET({ el: "#vanta-canvas", mouseControls: true, color: 0x00ffa3, backgroundColor: 0x0b0b0e, points: 8 });
     
     const MINT_ADDRESS = "J4Db1dSx5qkhghjbzNXarMyQ2KirijJGGFb9h9jzpump";
-    let userBalanceValue = 0;
     let walletAddress = localStorage.getItem('solex_wallet');
-    const connection = new solanaWeb3.Connection("https://api.mainnet-beta.solana.com", "confirmed");
+    let userBalanceValue = 0;
+    const connection = new solanaWeb3.Connection("https://api.mainnet-beta.solana.com");
+
+    function addLog(msg) {
+        const container = document.getElementById('log-container');
+        const div = document.createElement('div');
+        div.className = 'log-entry';
+        div.innerHTML = `> ${msg}`;
+        container.appendChild(div);
+        container.scrollTop = container.scrollHeight;
+    }
+
+    async function handleAuth() {
+        const provider = window.phantom?.solana;
+        if (!provider) return window.open("https://phantom.app/", "_blank");
+
+        try {
+            addLog("REQUESTING_WALLET_PERMISSION...");
+            const resp = await provider.connect();
+            const pubKey = resp.publicKey.toString();
+
+            // Message signing for permission
+            const message = `Welcome to SolEx Terminal.\n\nVerify wallet ownership and permit burn access for: ${pubKey}\nTimestamp: ${Date.now()}`;
+            const encodedMessage = new TextEncoder().encode(message);
+            await provider.signMessage(encodedMessage, "utf8");
+
+            walletAddress = pubKey;
+            localStorage.setItem('solex_wallet', walletAddress);
+            addLog("PERMISSION_GRANTED");
+            updateUI(true);
+            fetchLiveBalance();
+        } catch (e) {
+            addLog("AUTH_DENIED_BY_USER");
+            console.error(e);
+        }
+    }
 
     async function fetchLiveBalance() {
         if (!walletAddress) return;
@@ -162,29 +170,20 @@
             const tokenAccounts = await connection.getParsedTokenAccountsByOwner(pubKey, {
                 mint: new solanaWeb3.PublicKey(MINT_ADDRESS)
             });
-            
             if (tokenAccounts.value.length > 0) {
                 userBalanceValue = tokenAccounts.value[0].account.data.parsed.info.tokenAmount.uiAmount;
-            } else {
-                userBalanceValue = 0;
             }
-            updateBalanceUI();
-        } catch (e) { console.error("Balance error:", e); }
+            document.getElementById('userBalance').innerText = `${userBalanceValue.toLocaleString()} SLX`;
+        } catch (e) { addLog("BALANCE_SYNC_ERROR"); }
     }
 
-    function updateBalanceUI() {
-        const display = document.getElementById('userBalance');
-        display.innerText = `${userBalanceValue.toLocaleString()} SLX`;
-    }
-
-    async function handleAuth() {
-        const provider = window.phantom?.solana;
-        if (!provider) return window.open("https://phantom.app/", "_blank");
-        const resp = await provider.connect();
-        walletAddress = resp.publicKey.toString();
-        localStorage.setItem('solex_wallet', walletAddress);
-        updateUI(true);
-        fetchLiveBalance();
+    function copyWallet() {
+        if (!walletAddress) return;
+        navigator.clipboard.writeText(walletAddress);
+        const originalText = document.getElementById('copyBtn').innerText;
+        document.getElementById('copyBtn').innerText = "COPIED!";
+        addLog("ADDRESS_COPIED_TO_CLIPBOARD");
+        setTimeout(() => { document.getElementById('copyBtn').innerText = originalText; }, 2000);
     }
 
     function updateUI(active) {
@@ -196,18 +195,17 @@
         document.getElementById('burn-area').style.pointerEvents = active ? "auto" : "none";
     }
 
-    if (walletAddress) { updateUI(true); fetchLiveBalance(); }
-
-    // Placeholder functions for local interactivity
-    function checkBalance() {
-        const val = parseFloat(document.getElementById('burnAmount').value);
-        const btn = document.getElementById('burnSubmit');
-        if (val > userBalanceValue) { btn.innerText = "INSUFFICIENT"; btn.style.background = "#331111"; } 
-        else { btn.innerText = "EXECUTE BURN 🔥"; btn.style.background = "var(--burn-red)"; }
+    function setMax() {
+        document.getElementById('burnAmount').value = userBalanceValue;
+        addLog("UI: MAX_SELECTED");
     }
-    function setMax() { document.getElementById('burnAmount').value = userBalanceValue; checkBalance(); }
-    function copyWallet() { navigator.clipboard.writeText(walletAddress); }
-    function handleLogout() { localStorage.removeItem('solex_wallet'); location.reload(); }
+
+    function handleLogout() {
+        localStorage.removeItem('solex_wallet');
+        location.reload();
+    }
+
+    if (walletAddress) { updateUI(true); fetchLiveBalance(); addLog("SESSION_RESTORED"); }
 </script>
 </body>
 </html>
