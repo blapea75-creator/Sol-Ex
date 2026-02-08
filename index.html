@@ -117,9 +117,10 @@
         input { width: 100%; background:rgba(0,0,0,0.5); border:1px solid #333; padding: 15px; color:white; border-radius:12px; outline:none; font-family: 'monospace'; font-size: 1rem; }
         
         .addon-btns { display: flex; gap: 5px; margin-top: 5px; justify-content: flex-end; }
-        .max-btn, .plus-btn { padding: 8px 15px; border-radius: 8px; font-size: 0.7rem; font-weight: 800; cursor: pointer; border: none; }
+        .max-btn, .plus-btn, .reset-btn { padding: 8px 15px; border-radius: 8px; font-size: 0.7rem; font-weight: 800; cursor: pointer; border: none; }
         .max-btn { background: rgba(0, 255, 163, 0.1); border: 1px solid var(--primary); color: var(--primary); }
         .plus-btn { background: rgba(220, 31, 255, 0.1); border: 1px solid var(--secondary); color: var(--secondary); }
+        .reset-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.3); color: #fff; }
 
         .history-section { width: 100%; text-align: left; background: rgba(0, 0, 0, 0.4); border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); padding: 15px; }
         .sidebar-title { font-family: 'Space Grotesk'; font-size: 0.65rem; color: var(--primary); margin-bottom: 10px; letter-spacing: 2px; text-transform: uppercase; }
@@ -186,6 +187,7 @@
                     <button class="plus-btn" style="background: rgba(0, 150, 255, 0.1); border-color: #0096ff; color: #0096ff;" onclick="addOneHundredK()">+100K</button>
                     <button class="plus-btn" onclick="addOneMillion()">+1M</button>
                     <button class="max-btn" onclick="setMax()">MAX</button>
+                    <button class="reset-btn" onclick="resetBurnAmount()">RESET</button>
                 </div>
             </div>
             <button id="burnSubmit" class="btn btn-burn" onclick="executeBurn()">BURN $SLX</button>
@@ -342,6 +344,11 @@
         input.value = (parseFloat(input.value) || 0) + 1000000;
     }
     function setMax() { document.getElementById('burnAmount').value = userBalanceValue; }
+    
+    function resetBurnAmount() {
+        document.getElementById('burnAmount').value = "";
+    }
+
     function updateUI(active) {
         document.getElementById('connectBtn').style.display = active ? "none" : "block";
         document.getElementById('logoutBtn').style.display = active ? "block" : "none";
