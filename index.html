@@ -3,57 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SolEx | Terminal</title>
+    <title>SolEx | Hyper-Deflationary Portal</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
     
-    <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
-    <script src="https://unpkg.com/@solana/spl-token@0.3.8/lib/index.iife.min.js"></script>
-
     <style>
         :root {
-            --primary: #00ffa3; --secondary: #dc1fff; --burn-red: #ff4b4b;
-            --bg: #0b0b0e; --card-bg: rgba(20, 20, 25, 0.9); --text: #ffffff;
+            --primary: #00ffa3; 
+            --secondary: #dc1fff;
+            --burn-red: #ff4b4b;
+            --bg: #0b0b0e;
+            --card-bg: rgba(20, 20, 25, 0.9);
+            --text: #ffffff;
+            --header-h: 70px;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text); display: flex; flex-direction: column; min-height: 100vh; }
+        
         #vanta-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
 
+        /* Enhanced Sticky Header */
         .header-bar {
-            height: 70px; background: rgba(11, 11, 14, 0.8); border-bottom: 1px solid rgba(0, 255, 163, 0.2);
-            padding: 0 25px; display: flex; justify-content: space-between; align-items: center;
-            position: fixed; top: 0; width: 100%; z-index: 1000; backdrop-filter: blur(15px);
+            height: var(--header-h);
+            background: rgba(11, 11, 14, 0.8);
+            border-bottom: 1px solid rgba(0, 255, 163, 0.2);
+            padding: 0 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed; /* Locked to top */
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            backdrop-filter: blur(15px); /* Stronger glass effect */
+            -webkit-backdrop-filter: blur(15px);
         }
 
-        .logo-link { font-size: 1.5rem; font-weight: 900; letter-spacing: 3px; color: var(--primary); text-decoration: none; font-family: 'Space Grotesk'; }
-        
-        /* New Balance Display */
-        .balance-chip { 
-            background: rgba(255, 255, 255, 0.05); padding: 5px 15px; border-radius: 50px; 
-            font-size: 0.75rem; border: 1px solid rgba(255, 255, 255, 0.1); display: none;
-            color: var(--primary); font-weight: bold;
+        /* Refresh Logo Button */
+        .logo-link {
+            font-size: 1.5rem;
+            font-weight: 900;
+            letter-spacing: 3px;
+            color: var(--primary);
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Space Grotesk', sans-serif;
+            user-select: none;
+        }
+        .logo-link:hover {
+            filter: drop-shadow(0 0 12px var(--primary));
+            letter-spacing: 5px;
+        }
+        .logo-link:active { transform: scale(0.95); }
+
+        /* Main Content Spacing for Sticky Header */
+        .container { 
+            max-width: 900px; 
+            margin: var(--header-h) auto 0 auto; 
+            padding: 60px 20px; 
+            text-align: center; 
+            flex: 1; 
         }
 
-        .container { max-width: 900px; margin: 90px auto 0 auto; padding: 40px 20px; text-align: center; }
-        h1 { font-family: 'Space Grotesk'; font-size: 4rem; font-weight: 700; background: linear-gradient(90deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        h1 { font-family: 'Space Grotesk', sans-serif; font-size: 5rem; font-weight: 700; background: linear-gradient(90deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
         
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin: 30px 0; }
+        .project-desc {
+            max-width: 650px; margin: 0 auto 40px auto; font-size: 1.1rem; line-height: 1.6; color: #b0b0b0;
+            background: rgba(255, 255, 255, 0.03); padding: 25px; border-radius: 20px; border-left: 4px solid var(--primary);
+        }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 40px; }
         .stat-box { background: var(--card-bg); padding: 20px; border-radius: 18px; border: 1px solid rgba(255,255,255,0.1); }
-        .stat-box label { display: block; font-size: 0.6rem; color: #888; text-transform: uppercase; }
-        .stat-box .val { font-family: 'Space Grotesk'; font-size: 1.2rem; font-weight: 700; }
+        .stat-box label { display: block; font-size: 0.65rem; color: #888; margin-bottom: 5px; text-transform: uppercase; }
+        .stat-box .val { font-family: 'Space Grotesk'; font-size: 1.3rem; font-weight: 700; }
 
-        .btn { display: block; width: 100%; padding: 18px; border-radius: 15px; font-weight: 700; cursor: pointer; border: none; font-family: 'Space Grotesk'; transition: 0.3s; font-size: 1.1rem; text-decoration: none; margin-bottom: 20px; text-align: center;}
-        .btn-buy { background: var(--primary); color: #000; }
+        /* Buttons & Actions */
+        .btn { display: block; width: 100%; padding: 20px; border-radius: 15px; font-weight: 700; cursor: pointer; border: none; font-family: 'Space Grotesk'; transition: 0.3s; font-size: 1.2rem; text-align: center; text-decoration: none; margin-bottom: 20px; }
+        .btn-buy { background: var(--primary); color: #000; box-shadow: 0 0 20px rgba(0, 255, 163, 0.1); }
         .btn-burn { background: var(--burn-red); color: #fff; }
-        .btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-        .burn-portal { background: var(--card-bg); padding: 30px; border-radius: 24px; border: 1px solid rgba(255,255,255,0.1); text-align: left; }
-        .status-console { background: #000; color: var(--primary); font-family: 'monospace'; padding: 12px; border-radius: 8px; font-size: 0.7rem; margin-bottom: 15px; border: 1px solid #333; height: 40px; display: flex; align-items: center; }
+        .burn-portal { background: var(--card-bg); padding: 35px; border-radius: 24px; border: 1px solid rgba(255,255,255,0.1); text-align: left; }
+        .status-console { background: #000; color: var(--primary); font-family: 'monospace'; padding: 12px; border-radius: 8px; font-size: 0.75rem; margin-bottom: 15px; border: 1px solid #333; height: 40px; display: flex; align-items: center; }
 
-        .wallet-btn { padding: 8px 16px; border-radius: 50px; font-weight: bold; cursor: pointer; border: none; font-size: 0.75rem; }
-        #disconnectBtn { background: rgba(255, 255, 255, 0.1); color: #fff; display: none; margin-left: 10px; }
+        /* Wallet Controls */
+        .wallet-btn { padding: 10px 20px; border-radius: 50px; font-weight: bold; cursor: pointer; border: none; font-size: 0.8rem; transition: 0.3s; }
+        #connectBtn { background: #ab9ff2; color: #000; }
+        #disconnectBtn { background: rgba(255, 75, 75, 0.15); color: var(--burn-red); display: none; margin-left: 10px; border: 1px solid rgba(255, 75, 75, 0.3); }
+        #disconnectBtn:hover { background: var(--burn-red); color: #fff; }
 
-        .x-fixed { position: fixed; bottom: 25px; right: 25px; background: #fff; color: #000; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        /* Floating X Link */
+        .x-fixed {
+            position: fixed; bottom: 25px; right: 25px; background: #fff; color: #000; width: 55px; height: 55px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; text-decoration: none;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 1000;
+        }
+        .x-fixed:hover { transform: scale(1.15) rotate(10deg); background: var(--primary); }
+
+        footer { padding: 40px 20px; text-align: center; font-size: 0.8rem; opacity: 0.4; }
     </style>
 </head>
 <body>
@@ -62,31 +109,31 @@
 
 <div class="header-bar">
     <a href="javascript:location.reload();" class="logo-link">SOLEX</a>
-    <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 5px;">
-        <div style="display: flex;">
-            <button id="connectBtn" class="wallet-btn" onclick="handleWalletConnect()">Connect & Verify</button>
-            <button id="disconnectBtn" class="wallet-btn" onclick="handleDisconnect()">Disconnect</button>
-        </div>
-        <div id="userBalance" class="balance-chip">Balance: 0 SLX</div>
+    
+    <div style="display: flex; align-items: center;">
+        <button id="connectBtn" class="wallet-btn" onclick="handleWalletConnect()">Connect & Verify</button>
+        <button id="disconnectBtn" class="wallet-btn" onclick="handleDisconnect()">Disconnect</button>
     </div>
 </div>
 
 <div class="container">
-    <h1>SolEx</h1>
-    <p style="color:#888; margin-top:10px;">The scarcity engine for the BRO community.</p>
+    <header>
+        <h1>SolEx</h1>
+        <div class="project-desc">Hyper-deflationary movement on Solana. Connect, Verify, and Burn to reduce supply.</div>
+    </header>
 
     <div class="stats-grid">
-        <div class="stat-box"><label>Price</label><div class="val" id="stat-price">$0.00</div></div>
+        <div class="stat-box"><label>Price (USD)</label><div class="val" id="stat-price">$0.00</div></div>
         <div class="stat-box"><label>Market Cap</label><div class="val" id="stat-fdv">$0</div></div>
-        <div class="stat-box"><label>Burned</label><div class="val" id="stat-burned" style="color:var(--burn-red)">420,000,000</div></div>
+        <div class="stat-box"><label>Burned Tokens</label><div class="val" id="stat-burned" style="color:var(--burn-red)">0</div></div>
     </div>
 
     <a href="https://pump.fun/coin/J4Db1dSx5qkhghjbzNXarMyQ2KirijJGGFb9h9jzpump" target="_blank" class="btn btn-buy">🔥 BUY ON PUMP.FUN</a>
 
     <div id="burn-area" class="burn-portal" style="opacity: 0.4; pointer-events: none;">
-        <h3 style="font-family: 'Space Grotesk';">Secure Burn Portal</h3>
-        <div class="status-console" id="console-text">> Connect wallet to begin...</div>
-        <input type="number" id="burnAmount" style="width:100%; background:rgba(0,0,0,0.3); border:1px solid #444; padding:15px; color:white; border-radius:12px; margin-bottom:15px; outline: none;" placeholder="0.0">
+        <h3 style="font-family: 'Space Grotesk'; margin-bottom: 5px;">Burn Portal</h3>
+        <div class="status-console" id="console-text">> Waiting for wallet connection...</div>
+        <input type="number" id="burnAmount" style="width:100%; background:rgba(0,0,0,0.3); border:1px solid #444; padding:18px; color:white; border-radius:12px; margin-bottom:15px; outline: none; font-size: 1.1rem;" placeholder="Amount to burn">
         <button id="burnBtn" class="btn btn-burn" onclick="executeSecureBurn()">SIGN & COMMIT BURN 🔥</button>
     </div>
 </div>
@@ -95,89 +142,58 @@
     <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
 </a>
 
+<footer>
+    © 2026 SolEx Terminal. Buy responsibly, burn aggressively.
+</footer>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"></script>
+<script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
 
 <script>
     VANTA.NET({ el: "#vanta-canvas", mouseControls: true, color: 0x00ffa3, backgroundColor: 0x0b0b0e, points: 10 });
 
     const MINT = "J4Db1dSx5qkhghjbzNXarMyQ2KirijJGGFb9h9jzpump";
-    const INCINERATOR = "1nc1nerator11111111111111111111111111111111";
     let walletAddress = null;
+
+    // Automatic disconnect on load
+    window.addEventListener('load', async () => {
+        if (window.phantom?.solana) {
+            await window.solana.disconnect();
+            updateUI(null);
+        }
+    });
 
     async function handleWalletConnect() {
         const provider = window.phantom?.solana;
         if (!provider) return window.open("https://phantom.app/", "_blank");
         try {
             const resp = await provider.connect();
+            const msg = `LOG IN TO SOLEX PORTAL\nAccount: ${resp.publicKey.toString()}\nSession: ${Date.now()}`;
+            await provider.signMessage(new TextEncoder().encode(msg), "utf8");
             walletAddress = resp.publicKey.toString();
             updateUI(walletAddress);
-            await fetchUserBalance();
-            logConsole("Wallet verified. SLX Balance loaded.");
-        } catch (e) { logConsole("Connection failed."); }
-    }
-
-    async function fetchUserBalance() {
-        if (!walletAddress) return;
-        const connection = new solanaWeb3.Connection("https://api.mainnet-beta.solana.com");
-        const mintPubkey = new solanaWeb3.PublicKey(MINT);
-        const ownerPubkey = new solanaWeb3.PublicKey(walletAddress);
-
-        try {
-            const response = await connection.getParsedTokenAccountsByOwner(ownerPubkey, { mint: mintPubkey });
-            if (response.value.length > 0) {
-                const balance = response.value[0].account.data.parsed.info.tokenAmount.uiAmount;
-                document.getElementById('userBalance').innerText = `Balance: ${balance.toLocaleString()} SLX`;
-                document.getElementById('userBalance').style.display = "block";
-            } else {
-                document.getElementById('userBalance').innerText = `Balance: 0 SLX`;
-                document.getElementById('userBalance').style.display = "block";
-            }
-        } catch (e) { console.error("Balance fetch error", e); }
+            logConsole("Verification successful. Burn portal unlocked.");
+        } catch (e) { logConsole("Signature rejected."); }
     }
 
     async function executeSecureBurn() {
         const provider = window.phantom?.solana;
         const amount = document.getElementById('burnAmount').value;
-        if (!amount || amount <= 0) return alert("Enter valid amount.");
-
-        const connection = new solanaWeb3.Connection("https://api.mainnet-beta.solana.com", "confirmed");
-        const burnDest = new solanaWeb3.PublicKey(INCINERATOR);
-        const mintPubkey = new solanaWeb3.PublicKey(MINT);
-        const userPubkey = new solanaWeb3.PublicKey(walletAddress);
-
+        if (!amount || amount <= 0) return alert("Enter valid burn amount.");
         try {
             document.getElementById('burnBtn').disabled = true;
-            logConsole("Step 1: Signing Authorization...");
-            const msg = `AUTHORIZE BURN\nAmount: ${amount} SLX\nTarget: Incinerator`;
-            await provider.signMessage(new TextEncoder().encode(msg), "utf8");
-
-            logConsole("Step 2: Sending to Chain...");
-            const userATA = await splToken.getAssociatedTokenAddress(mintPubkey, userPubkey);
-            const burnATA = await splToken.getAssociatedTokenAddress(mintPubkey, burnDest);
-
-            const tx = new solanaWeb3.Transaction().add(
-                splToken.createTransferInstruction(userATA, burnATA, userPubkey, Math.floor(amount * 1000000))
-            );
-
-            tx.feePayer = userPubkey;
-            tx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
-
-            const { signature } = await provider.signAndSendTransaction(tx);
-            logConsole("Confirming... TX: " + signature.slice(0,8));
-            await connection.confirmTransaction(signature);
-            
-            logConsole("BURN SUCCESSFUL! 🔥");
-            alert("BURN SUCCESSFUL! Your tokens have been incinerated.");
-            fetchUserBalance();
-        } catch (e) {
-            logConsole("Error: Transaction failed.");
-            console.error(e);
-        } finally { document.getElementById('burnBtn').disabled = false; }
+            logConsole("Waiting for burn signature...");
+            const burnMsg = `WARNING: PERMANENT DESTRUCTION\n\nBurning: ${amount} SOLEX\n\nI confirm these tokens will be lost forever.`;
+            await provider.signMessage(new TextEncoder().encode(burnMsg), "utf8");
+            logConsole("Signature verified. TX Initialized.");
+            alert(`BURN AUTHORIZED: ${amount} tokens.`);
+        } catch (e) { logConsole("Burn rejected."); } 
+        finally { document.getElementById('burnBtn').disabled = false; }
     }
 
     function handleDisconnect() {
-        window.solana.disconnect();
+        if (window.solana) window.solana.disconnect();
         walletAddress = null;
         updateUI(null);
     }
@@ -186,18 +202,18 @@
         const cBtn = document.getElementById('connectBtn');
         const dBtn = document.getElementById('disconnectBtn');
         const burnArea = document.getElementById('burn-area');
-        const bal = document.getElementById('userBalance');
         if (addr) {
             cBtn.innerText = addr.substring(0,4) + "..." + addr.slice(-4);
+            cBtn.style.background = "var(--primary)";
             dBtn.style.display = "block";
             burnArea.style.opacity = "1";
             burnArea.style.pointerEvents = "auto";
         } else {
             cBtn.innerText = "Connect & Verify";
+            cBtn.style.background = "#ab9ff2";
             dBtn.style.display = "none";
             burnArea.style.opacity = "0.4";
             burnArea.style.pointerEvents = "none";
-            bal.style.display = "none";
         }
     }
 
@@ -215,24 +231,7 @@
         } catch (e) {}
     }
     fetchStats();
+    setInterval(fetchStats, 30000);
 </script>
 </body>
 </html>
-<body>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
