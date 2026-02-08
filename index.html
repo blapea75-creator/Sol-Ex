@@ -103,6 +103,17 @@
 
         .burn-portal { background: var(--card-bg); padding: 20px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); text-align: left; margin-bottom: 20px; }
         .input-wrapper { position: relative; display: flex; flex-direction: column; gap: 8px; }
+        
+        /* REMOVE ARROW SPINNERS */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+        input[type=number] {
+            -moz-appearance: textfield; /* Firefox */
+        }
+
         input { width: 100%; background:rgba(0,0,0,0.5); border:1px solid #333; padding: 15px; color:white; border-radius:12px; outline:none; font-family: 'monospace'; font-size: 1rem; }
         
         .addon-btns { display: flex; gap: 5px; margin-top: 5px; justify-content: flex-end; }
