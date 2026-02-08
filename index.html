@@ -78,6 +78,87 @@
         .tx-link { color: var(--primary); font-family: 'monospace'; font-size: 0.8rem; text-decoration: none; word-break: break-all; display: block; margin: 20px 0; border: 1px dashed #333; padding: 10px; }
     </style>
 </head>
+1<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SolEx | Terminal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
+
+    <style>
+        :root {
+            --primary: #00ffa3; --secondary: #dc1fff; --burn-red: #ff4b4b;
+            --bg: #0b0b0e; --card-bg: rgba(20, 20, 25, 0.9); --text: #ffffff;
+            --header-h: 80px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text); min-height: 100vh; overflow: hidden; }
+        #vanta-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+
+        /* HEADER */
+        .header-bar {
+            height: var(--header-h); background: rgba(11, 11, 14, 0.9); border-bottom: 2px solid var(--primary);
+            padding: 0 25px; display: flex; justify-content: space-between; align-items: center;
+            position: fixed; top: 0; width: 100%; z-index: 1000; backdrop-filter: blur(20px);
+        }
+        .logo-link { font-size: 1.6rem; font-weight: 900; letter-spacing: 4px; color: var(--primary); text-decoration: none; font-family: 'Space Grotesk'; }
+
+        .wallet-actions { display: flex; align-items: center; gap: 12px; }
+        .balance-chip { background: rgba(0, 255, 163, 0.05); padding: 8px 16px; border-radius: 50px; font-size: 0.75rem; border: 1px solid rgba(0, 255, 163, 0.3); color: var(--primary); font-weight: 800; display: none; }
+        .copy-btn { background: #1a1a1a; border: 1px solid #333; color: white; padding: 8px 14px; border-radius: 8px; font-size: 0.65rem; cursor: pointer; display: none; text-transform: uppercase; font-weight: 700; transition: 0.2s; }
+
+        /* LAYOUT */
+        .main-layout { display: grid; grid-template-columns: 1fr 240px; height: calc(100vh - var(--header-h)); margin-top: var(--header-h); }
+        .terminal-content { padding: 40px; overflow-y: auto; display: flex; flex-direction: column; align-items: center; }
+
+        /* CENTER CONTENT */
+        .container-box { max-width: 650px; width: 100%; text-align: center; }
+        h1 { font-family: 'Space Grotesk'; font-size: 4.5rem; font-weight: 700; background: linear-gradient(90deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 5px; }
+        .description { color: #888; font-size: 0.9rem; margin-bottom: 30px; letter-spacing: 1px; }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 25px; }
+        .stat-box { background: rgba(255,255,255,0.03); padding: 18px; border-radius: 18px; border: 1px solid rgba(255,255,255,0.08); }
+        .stat-label { font-size: 0.6rem; color: #555; text-transform: uppercase; margin-bottom: 5px; }
+        .stat-val { font-family: 'Space Grotesk'; font-size: 1rem; font-weight: 700; }
+
+        .btn-group { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .btn { flex: 1; padding: 18px; border-radius: 14px; font-weight: 700; cursor: pointer; border: none; font-family: 'Space Grotesk'; transition: 0.3s; font-size: 0.9rem; text-decoration: none; text-align: center; min-width: 140px;}
+        .btn-buy { background: var(--primary); color: #000; }
+        .btn-dex { background: #ab9ff2; color: #000; }
+        .btn-x { background: #ffffff; color: #000; }
+        .btn-burn { background: var(--burn-red); color: #fff; width: 100%; }
+        .btn-burn.disabled { background: #331111; color: #666; cursor: not-allowed; }
+
+        /* BURN PORTAL */
+        .burn-portal { background: var(--card-bg); padding: 30px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); text-align: left; margin-bottom: 25px; }
+        .input-wrapper { position: relative; margin-bottom: 15px; }
+        input { width:100%; background:rgba(0,0,0,0.5); border:1px solid #333; padding:18px 70px 18px 15px; color:white; border-radius:12px; outline:none; font-family: 'monospace'; }
+        .max-btn { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: rgba(0, 255, 163, 0.1); border: 1px solid var(--primary); color: var(--primary); padding: 5px 10px; border-radius: 6px; font-size: 0.7rem; font-weight: 800; cursor: pointer; transition: 0.2s; }
+
+        /* HISTORY TABLE */
+        .history-panel { width: 100%; background: rgba(255,255,255,0.02); border-radius: 20px; padding: 25px; text-align: left; border: 1px solid rgba(255,255,255,0.05); }
+        .history-title { font-family: 'Space Grotesk'; font-size: 0.75rem; color: var(--primary); letter-spacing: 2px; margin-bottom: 15px; border-bottom: 1px solid #222; padding-bottom: 8px; }
+        .history-table { width: 100%; border-collapse: collapse; font-size: 0.7rem; }
+        .history-table th { text-align: left; padding: 10px; color: #444; text-transform: uppercase; font-size: 0.6rem; }
+        .history-table td { padding: 12px 10px; border-bottom: 1px solid #111; font-family: 'monospace'; color: #888; }
+        .tx-mini-link { color: var(--primary); text-decoration: none; }
+        .tx-mini-link:hover { text-decoration: underline; }
+
+        /* AUDIT LOG */
+        .audit-sidebar { background: rgba(0, 0, 0, 0.6); border-left: 1px solid rgba(0, 255, 163, 0.1); padding: 15px; display: flex; flex-direction: column; backdrop-filter: blur(10px); }
+        .audit-title { font-family: 'Space Grotesk'; font-size: 0.65rem; color: var(--primary); margin-bottom: 15px; opacity: 0.5; }
+        .log-container { flex-grow: 1; font-family: 'monospace'; font-size: 0.65rem; overflow-y: auto; color: #444; }
+        .log-entry { margin-bottom: 8px; border-left: 1px solid #222; padding-left: 8px; }
+
+        /* TX MODAL */
+        #txModal { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 2000; backdrop-filter: blur(5px); }
+        .modal-box { background: #111; border: 1px solid var(--primary); padding: 40px; border-radius: 24px; text-align: center; max-width: 400px; width: 90%; }
+        .tx-link { color: var(--primary); font-family: 'monospace'; font-size: 0.8rem; text-decoration: none; word-break: break-all; display: block; margin: 20px 0; border: 1px dashed #333; padding: 10px; }
+    </style>
+</head>
 <body>
 
 <div id="vanta-canvas"></div>
@@ -116,6 +197,7 @@
             <div class="btn-group">
                 <a href="https://pump.fun/coin/J4Db1dSx5qkhghjbzNXarMyQ2KirijJGGFb9h9jzpump" target="_blank" class="btn btn-buy">PUMP.FUN</a>
                 <a href="https://dexscreener.com/solana/J4Db1dSx5qkhghjbzNXarMyQ2KirijJGGFb9h9jzpump" target="_blank" class="btn btn-dex">CHART</a>
+                <a href="https://x.com/SolExTerminal" target="_blank" class="btn btn-x">X / TWITTER</a>
             </div>
 
             <div class="burn-portal" id="burn-area" style="opacity: 0.3; pointer-events: none;">
@@ -148,9 +230,18 @@
 
 <script>
     VANTA.NET({ el: "#vanta-canvas", mouseControls: true, color: 0x00ffa3, backgroundColor: 0x0b0b0e, points: 8 });
+    
     let walletAddress = localStorage.getItem('solex_wallet');
-    let userBalanceValue = 250000; 
+    
+    // PERSISTENT BALANCE LOGIC
+    // Initialize balance from storage, or set to 250,000 if first time
+    let userBalanceValue = localStorage.getItem('slx_balance') ? parseFloat(localStorage.getItem('slx_balance')) : 250000;
+    
     let txHistory = JSON.parse(localStorage.getItem('solex_burns') || '[]');
+
+    function saveBalance() {
+        localStorage.setItem('slx_balance', userBalanceValue);
+    }
 
     function addLog(msg) {
         const container = document.getElementById('log-container');
@@ -201,7 +292,10 @@
 
         setTimeout(() => {
             const sig = Array.from({length:32}, () => Math.floor(Math.random() * 16).toString(16)).join('');
+            
+            // Deduct and Save
             userBalanceValue -= amount;
+            saveBalance();
             
             const record = { date: new Date().toLocaleDateString(), amount: amount.toLocaleString(), sig: sig };
             txHistory.push(record);
@@ -225,7 +319,7 @@
 
     async function handleAuth() {
         const provider = window.phantom?.solana;
-        if (!provider) return window.open("https://phantom.app/", "_blank");
+        if (!provider) return window.open("https://phantom.app/", "_blank");1
         try {
             const resp = await provider.connect();
             walletAddress = resp.publicKey.toString();
@@ -261,3 +355,4 @@
 </script>
 </body>
 </html>
+10
