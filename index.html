@@ -89,21 +89,21 @@
             <div class="stats-grid">
                 <div class="stat-box"><div class="stat-label">Price</div><div id="tokenPrice" class="stat-val">Syncing...</div></div>
                 <div class="stat-box"><div class="stat-label">FDV</div><div id="tokenFDV" class="stat-val">Syncing...</div></div>
-                <div class="stat-box"><div class="stat-label">Total Burned</div><div id="tokenBurned" class="stat-val" style="color:var(--burn-red)">Syncing...</div></div>
+                <div class="stat-box"><div class="stat-label"><b>$SLX</b> Burned</div><div id="tokenBurned" class="stat-val" style="color:var(--burn-red)">Syncing...</div></div>
             </div>
 
             <div class="btn-group">
-                <a href="https://pump.fun/coin/J4Db1dSx5qkhghjbzNXarMyQ2KirijJGGFb9h9jzpump" target="_blank" class="btn btn-buy">BUY & BURN (PUMP.FUN)</a>
+                <a href="https://pump.fun/coin/J4Db1dSx5qkhghjbzNXarMyQ2KirijJGGFb9h9jzpump" target="_blank" class="btn btn-buy">BUY <b>$SLX</b></a>
                 <a href="https://dexscreener.com/solana/J4Db1dSx5qkhghjbzNXarMyQ2KirijJGGFb9h9jzpump" target="_blank" class="btn btn-dex">LIVE CHART</a>
             </div>
 
             <div class="burn-portal" id="burn-area" style="opacity: 0.3; pointer-events: none;">
-                <h3 style="font-family:'Space Grotesk'; color:var(--burn-red); margin-bottom:15px; font-size: 0.8rem;">INCINERATION MODULE</h3>
+                <h3 style="font-family:'Space Grotesk'; color:var(--burn-red); margin-bottom:15px; font-size: 0.8rem;">BURNED <b>$SLX</b></h3>
                 <div class="input-wrapper">
                     <input type="number" id="burnAmount" placeholder="Amount to burn">
                     <button class="max-btn" onclick="setMax()">MAX</button>
                 </div>
-                <button id="burnSubmit" class="btn btn-burn" onclick="executeBurn()">EXECUTE BURN 🔥</button>
+                <button id="burnSubmit" class="btn btn-burn" onclick="executeBurn()">BURN <b>$SLX</b></button>
             </div>
 
             <div class="social-row">
@@ -222,3 +222,4 @@
 </body>
     </html>
     
+
