@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BRONIN | Live Stats Dashboard</title>
+    <title>BRONIN | The Bro's Token</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
@@ -17,11 +17,11 @@
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text); overflow-x: hidden; min-height: 100vh; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text); display: flex; flex-direction: column; min-height: 100vh; }
 
         #vanta-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
 
-        /* Top Bar */
+        /* Header Bar */
         .header-bar {
             background: rgba(0, 0, 0, 0.9);
             border-bottom: 1px solid var(--primary);
@@ -34,40 +34,50 @@
             z-index: 100;
             backdrop-filter: blur(10px);
         }
-        .live-ticker { display: flex; gap: 25px; font-size: 0.8rem; font-weight: bold; }
-        .live-ticker span { color: var(--primary); margin-left: 5px; }
+        .live-ticker { display: flex; gap: 20px; font-size: 0.75rem; font-weight: bold; }
+        .live-ticker span { color: var(--primary); }
 
-        .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; text-align: center; position: relative; z-index: 1; }
+        .container { max-width: 900px; margin: 0 auto; padding: 60px 20px; text-align: center; flex: 1; }
 
         h1 { font-family: 'Space Grotesk', sans-serif; font-size: 5rem; font-weight: 700; background: linear-gradient(90deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
         
-        .social-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            color: #fff;
-            text-decoration: none;
-            background: rgba(255,255,255,0.1);
-            padding: 8px 16px;
-            border-radius: 50px;
-            font-size: 0.8rem;
-            margin-bottom: 30px;
-            transition: 0.3s;
+        /* Description Section */
+        .project-desc {
+            max-width: 650px;
+            margin: 0 auto 40px auto;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #b0b0b0;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 20px;
+            border-radius: 15px;
+            border-left: 3px solid var(--primary);
         }
-        .social-link:hover { background: var(--primary); color: #000; }
 
-        /* Main Grid */
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px; }
+        /* Stats Grid */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 40px; }
         .stat-box { background: var(--card-bg); padding: 20px; border-radius: 18px; border: 1px solid rgba(255,255,255,0.1); }
-        .stat-box label { display: block; font-size: 0.65rem; color: #888; margin-bottom: 8px; letter-spacing: 1px; text-transform: uppercase; }
-        .stat-box .val { font-family: 'Space Grotesk'; font-size: 1.4rem; font-weight: 700; color: #fff; }
+        .stat-box label { display: block; font-size: 0.65rem; color: #888; margin-bottom: 5px; text-transform: uppercase; }
+        .stat-box .val { font-family: 'Space Grotesk'; font-size: 1.3rem; font-weight: 700; }
 
+        /* Buttons */
         .btn { display: block; width: 100%; padding: 20px; border-radius: 15px; font-weight: 700; cursor: pointer; border: none; font-family: 'Space Grotesk'; transition: 0.3s; font-size: 1.2rem; text-align: center; text-decoration: none; margin-bottom: 20px; }
         .btn-buy { background: var(--primary); color: #000; box-shadow: 0 0 20px rgba(0, 255, 163, 0.2); }
         .btn-burn { background: var(--burn-red); color: #fff; font-size: 1rem; }
         .btn:hover { transform: translateY(-3px); filter: brightness(1.1); }
 
-        #connectBtn { background: #ab9ff2; color: #000; padding: 10px 20px; border-radius: 50px; font-weight: bold; cursor: pointer; border: none; font-size: 0.8rem; }
+        /* Footer */
+        footer {
+            padding: 40px 20px;
+            background: rgba(0,0,0,0.5);
+            border-top: 1px solid rgba(255,255,255,0.05);
+            text-align: center;
+        }
+        .footer-socials { margin-bottom: 15px; }
+        .footer-social-link { color: #fff; text-decoration: none; font-size: 1.5rem; transition: 0.3s; padding: 10px; opacity: 0.7; }
+        .footer-social-link:hover { color: var(--primary); opacity: 1; }
+
+        #connectBtn { background: #ab9ff2; color: #000; padding: 8px 16px; border-radius: 50px; font-weight: bold; cursor: pointer; border: none; font-size: 0.75rem; }
     </style>
 </head>
 <body>
@@ -77,7 +87,7 @@
 <div class="header-bar">
     <div class="live-ticker">
         <div>PRICE: <span id="tick-price">$0.00...</span></div>
-        <div>HOLDERS: <span id="tick-holders">---</span></div>
+        <div>FDV: <span id="tick-fdv">$0</span></div>
     </div>
     <button id="connectBtn" onclick="handleWallet()">Connect Wallet</button>
 </div>
@@ -85,24 +95,94 @@
 <div class="container">
     <header>
         <h1>BRONIN</h1>
-        <a href="https://x.com/Only_BRONin" target="_blank" class="social-link">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-            Follow @Only_BRONin
-        </a>
+        <div class="project-desc">
+            <strong>The ultimate token for the BROs.</strong> <br>
+            BRONIN isn't just a coin; it's a movement built on the Solana blockchain. No taxes, no nonsense—just pure community growth and a hyper-deflationary burn mechanism. Join the bros and let's moon together.
+        </div>
     </header>
 
     <div class="stats-grid">
-        <div class="stat-box">
-            <label>Live Price</label>
-            <div class="val" id="stat-price">$0.00000</div>
-        </div>
-        <div class="stat-box">
-            <label>FDV</label>
-            <div class="val" id="stat-fdv">$0</div>
-        </div>
-        <div class="stat-box">
-            <label>Holders</label>
-            <div class="val" id="stat-holders">0</div>
+        <div class="stat-box"><label>Price</label><div class="val" id="stat-price">$0.00</div></div>
+        <div class="stat-box"><label>FDV</label><div class="val" id="stat-fdv">$0</div></div>
+        <div class="stat-box"><label>Holders</label><div class="val" id="stat-holders">---</div></div>
+        <div class="stat-box"><label>Total Burned</label><div class="val" id="stat-burned" style="color:var(--burn-red)">0</div></div>
+    </div>
+
+    <a href="https://pump.fun/coin/J4Db1dSx5qkhghjbzNXarMyQ2KirijJGGFb9h9jzpump" target="_blank" class="btn btn-buy">🔥 BUY ON PUMP.FUN</a>
+
+    <div style="background: var(--card-bg); padding: 30px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); text-align: left; margin-bottom: 40px;">
+        <h3 style="font-family: 'Space Grotesk'; margin-bottom: 10px;">Token Burn Portal</h3>
+        <p style="font-size: 0.8rem; color: #888; margin-bottom: 15px;">Destroy your BRONIN tokens to increase scarcity for every BRO.</p>
+        <input type="number" id="burnAmount" style="width:100%; background:rgba(255,255,255,0.05); border:none; padding:15px; color:white; border-radius:10px; margin-bottom:15px; outline:none;" placeholder="Amount to burn">
+        <button class="btn btn-burn" onclick="executeBurn()">BURN FOREVER 🔥</button>
+    </div>
+</div>
+
+<footer>
+    <div class="footer-socials">
+        <a href="https://x.com/Only_BRONin" target="_blank" class="footer-social-link" title="Follow us on X">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle;">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+            </svg>
+        </a>
+    </div>
+    <p style="font-size: 0.8rem; opacity: 0.5;">© 2026 BRONIN Token. All rights reserved. Buy responsibly.</p>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"></script>
+<script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
+
+<script>
+    VANTA.NET({ el: "#vanta-canvas", mouseControls: true, color: 0x00ffa3, backgroundColor: 0x0b0b0e, points: 10 });
+
+    const MINT = "J4Db1dSx5qkhghjbzNXarMyQ2KirijJGGFb9h9jzpump";
+    const INITIAL_SUPPLY = 1000000000;
+
+    async function fetchStats() {
+        try {
+            const dexRes = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${MINT}`);
+            const dexData = await dexRes.json();
+            const pair = dexData.pairs ? dexData.pairs[0] : null;
+
+            if (pair) {
+                document.getElementById('stat-price').innerText = `$${parseFloat(pair.priceUsd).toFixed(10)}`;
+                document.getElementById('tick-price').innerText = `$${parseFloat(pair.priceUsd).toFixed(8)}`;
+                document.getElementById('stat-fdv').innerText = `$${parseInt(pair.fdv).toLocaleString()}`;
+                document.getElementById('tick-fdv').innerText = `$${parseInt(pair.fdv).toLocaleString()}`;
+            }
+
+            const conn = new solanaWeb3.Connection("https://api.mainnet-beta.solana.com");
+            const supplyInfo = await conn.getTokenSupply(new solanaWeb3.PublicKey(MINT));
+            const burned = INITIAL_SUPPLY - supplyInfo.value.uiAmount;
+            document.getElementById('stat-burned').innerText = Math.floor(burned).toLocaleString();
+
+            const accounts = await conn.getProgramAccounts(new solanaWeb3.PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"), {
+                filters: [{ dataSize: 165 }, { memcmp: { offset: 0, bytes: MINT } }]
+            });
+            document.getElementById('stat-holders').innerText = accounts.length;
+        } catch (e) { console.log(e); }
+    }
+
+    fetchStats();
+    setInterval(fetchStats, 30000);
+
+    let wallet = null;
+    async function handleWallet() {
+        if (window.phantom?.solana?.isPhantom) {
+            const resp = await window.solana.connect();
+            wallet = resp.publicKey.toString();
+            document.getElementById('connectBtn').innerText = wallet.substring(0,4) + "...";
+        } else { window.open("https://phantom.app/", "_blank"); }
+    }
+
+    function executeBurn() {
+        if (!wallet) { alert("Connect Wallet!"); return; }
+        alert("Transaction request sent!");
+    }
+</script>
+</body>
+</html>
         </div>
         <div class="stat-box">
             <label>Total Burned</label>
@@ -248,5 +328,6 @@
 </script>
 </body>
 </html>
+
 
 
