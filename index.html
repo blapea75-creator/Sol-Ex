@@ -51,10 +51,12 @@
         .portal-card { background: var(--card-bg); padding: 20px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); text-align: left; }
         
         input { width:100%; background:rgba(0,0,0,0.5); border:1px solid #333; padding:15px; color:white; border-radius:10px; outline:none; font-size: 1rem; }
-        .q-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: #fff; padding: 10px; border-radius: 8px; font-size: 0.75rem; cursor: pointer; flex: 1; }
-        .btn-action { width: 100%; padding: 16px; border-radius: 12px; font-weight: 700; cursor: pointer; border: none; font-family: 'Space Grotesk'; margin-top: 10px; display: block; text-align: center; text-decoration: none; }
+        .q-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: #fff; padding: 10px; border-radius: 8px; font-size: 0.75rem; cursor: pointer; flex: 1; transition: 0.2s; }
+        .q-btn:hover { background: rgba(255,255,255,0.1); }
+        .btn-action { width: 100%; padding: 16px; border-radius: 12px; font-weight: 700; cursor: pointer; border: none; font-family: 'Space Grotesk'; margin-top: 10px; display: block; text-align: center; text-decoration: none; font-size: 0.9rem; }
         .btn-burn { background: var(--burn-red); color: #fff; }
         .btn-buy { background: var(--primary); color: #000; }
+        .btn-chart { background: #1a1a1a; color: #fff; border: 1px solid #333; margin-top: 10px; }
 
         .history-item { font-family: 'monospace'; font-size: 0.65rem; padding: 10px; border-radius: 6px; background: rgba(255,255,255,0.03); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border-left: 3px solid var(--burn-red); }
         .history-link { color: var(--primary); text-decoration: none; border: 1px solid var(--primary); padding: 3px 7px; border-radius: 4px; }
@@ -104,9 +106,9 @@
 
             <div class="portal-grid">
                 <div class="portal-card">
-                    <h3 style="color:var(--primary); font-size:0.7rem; margin-bottom:10px;">ACQUIRE $SLX</h3>
-                    <p style="font-size: 0.8rem; color: #666; margin-bottom: 15px;">Get tokens directly from the bonding curve.</p>
+                    <h3 style="color:var(--primary); font-size:0.7rem; margin-bottom:10px;">MARKET ACTIONS</h3>
                     <a href="https://pump.fun/coin/J4Db1dSx5qkhghjbzNXarMyQ2KirijJGGFb9h9jzpump" target="_blank" class="btn-action btn-buy">BUY ON PUMP.FUN</a>
+                    <a href="https://dexscreener.com/solana/J4Db1dSx5qkhghjbzNXarMyQ2KirijJGGFb9h9jzpump" target="_blank" class="btn-action btn-chart">VIEW LIVE CHART 📈</a>
                 </div>
 
                 <div class="portal-card" id="burn-area" style="opacity: 0.3; pointer-events: none;">
@@ -115,6 +117,7 @@
                     <div style="display:flex; gap:5px; margin-top:10px;">
                         <button class="q-btn" onclick="addAmount(100000)">+100K</button>
                         <button class="q-btn" onclick="addAmount(1000000)">+1M</button>
+                        <button class="q-btn" onclick="setMax()" style="color:var(--primary); font-weight:bold; border-color:var(--primary);">MAX</button>
                     </div>
                     <button class="btn-action btn-burn" onclick="executeBurn()">BURN $SLX 🔥</button>
                 </div>
@@ -140,9 +143,11 @@
     VANTA.NET({ el: "#vanta-canvas", mouseControls: true, color: 0x00ffa3, backgroundColor: 0x0b0b0e, points: 6 });
     const MINT = "J4Db1dSx5qkhghjbzNXarMyQ2KirijJGGFb9h9jzpump";
     let walletAddress = localStorage.getItem('solex_wallet');
+    let currentBalance = 0;
     const connection = new solanaWeb3.Connection("https://api.mainnet-beta.solana.com", "confirmed");
 
     function addAmount(v) { document.getElementById('burnAmount').value = (parseFloat(document.getElementById('burnAmount').value) || 0) + v; }
+    function setMax() { document.getElementById('burnAmount').value = currentBalance; }
 
     async function updateEverything() {
         try {
@@ -154,8 +159,8 @@
             if (walletAddress) {
                 const pubKey = new solanaWeb3.PublicKey(walletAddress);
                 const tokenAccounts = await connection.getParsedTokenAccountsByOwner(pubKey, { mint: new solanaWeb3.PublicKey(MINT) });
-                const bal = tokenAccounts.value.length > 0 ? tokenAccounts.value[0].account.data.parsed.info.tokenAmount.uiAmount : 0;
-                document.getElementById('userBalance').innerText = `${bal.toLocaleString()} SLX`;
+                currentBalance = tokenAccounts.value.length > 0 ? tokenAccounts.value[0].account.data.parsed.info.tokenAmount.uiAmount : 0;
+                document.getElementById('userBalance').innerText = `${currentBalance.toLocaleString()} SLX`;
                 
                 const sigs = await connection.getSignaturesForAddress(pubKey, { limit: 8 });
                 document.getElementById('history-list').innerHTML = sigs.map(tx => `
@@ -171,10 +176,23 @@
     async function handleAuth() {
         const provider = window.phantom?.solana;
         if (!provider) return window.open("https://phantom.app/", "_blank");
-        const resp = await provider.connect();
-        walletAddress = resp.publicKey.toString();
-        localStorage.setItem('solex_wallet', walletAddress);
-        location.reload();
+        
+        try {
+            const resp = await provider.connect();
+            const publicKey = resp.publicKey.toString();
+            
+            // SIGN MESSAGE PROMPT
+            const message = `Welcome to SolEx Terminal.\n\nSign this message to verify your identity and access the incinerator.\n\nTimestamp: ${Date.now()}`;
+            const encodedMessage = new TextEncoder().encode(message);
+            await provider.signMessage(encodedMessage, "utf8");
+            
+            walletAddress = publicKey;
+            localStorage.setItem('solex_wallet', walletAddress);
+            location.reload();
+        } catch (e) {
+            console.error("Auth/Signing failed", e);
+            alert("Connection and Signing required to access terminal.");
+        }
     }
 
     function updateUI(active) {
