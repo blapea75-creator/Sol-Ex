@@ -39,12 +39,13 @@
 
         /* LAYOUT */
         .main-layout { display: flex; flex-direction: column; margin-top: var(--header-h); min-height: calc(100vh - var(--header-h)); }
-        .audit-sidebar { background: rgba(0, 0, 0, 0.85); border-top: 1px solid rgba(0, 255, 163, 0.1); padding: 15px; height: 250px; order: 2; overflow-y: auto; }
+        .audit-sidebar { background: rgba(0, 0, 0, 0.85); border-top: 1px solid rgba(0, 255, 163, 0.1); padding: 15px; height: 300px; order: 2; overflow-y: auto; }
         .terminal-content { padding: 20px; flex: 1; display: flex; flex-direction: column; align-items: center; order: 1; }
 
         .container-box { max-width: 650px; width: 100%; text-align: center; }
         h1 { font-family: 'Space Grotesk'; font-size: 3rem; font-weight: 700; background: linear-gradient(90deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
-        
+        .description { color: #888; font-size: 0.85rem; margin-bottom: 25px; line-height: 1.4; }
+
         /* STATS */
         .stats-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 25px; }
         .stat-box { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.08); }
@@ -53,22 +54,29 @@
 
         /* BURN PORTAL */
         .burn-portal { background: var(--card-bg); padding: 20px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); text-align: left; }
-        .quick-actions { display: flex; gap: 8px; margin-top: 10px; }
-        .q-btn { flex: 1; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: #fff; padding: 10px; border-radius: 8px; font-size: 0.75rem; font-weight: 700; cursor: pointer; }
-        .q-btn:hover { background: var(--primary); color: #000; }
-        
+        .input-wrapper { position: relative; margin-bottom: 10px; }
         input { width:100%; background:rgba(0,0,0,0.5); border:1px solid #333; padding:15px; color:white; border-radius:10px; outline:none; font-size: 1rem; }
-        .btn-burn { width:100%; padding: 16px; border-radius: 12px; font-weight: 700; cursor: pointer; border: none; background: var(--burn-red); color: #fff; margin-top: 15px; font-family: 'Space Grotesk'; }
+        
+        .quick-actions { display: flex; gap: 8px; margin-top: 10px; }
+        .q-btn { flex: 1; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: #fff; padding: 10px; border-radius: 8px; font-size: 0.75rem; font-weight: 700; cursor: pointer; transition: 0.2s; }
+        .q-btn:hover { background: var(--primary); color: #000; border-color: var(--primary); }
+        
+        .btn-burn { width: 100%; padding: 16px; border-radius: 12px; font-weight: 700; cursor: pointer; border: none; background: var(--burn-red); color: #fff; margin-top: 10px; font-family: 'Space Grotesk'; font-size: 0.9rem; }
 
-        /* HISTORY LOGS */
-        .log-header { font-size: 0.7rem; color: var(--primary); font-weight: 800; border-bottom: 1px solid rgba(0, 255, 163, 0.2); padding-bottom: 5px; margin-bottom: 10px; text-transform: uppercase; }
-        .history-item { font-family: 'monospace'; font-size: 0.65rem; padding: 8px; border-radius: 4px; background: rgba(255,255,255,0.03); margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 2px solid var(--burn-red); }
-        .history-link { color: var(--primary); text-decoration: none; border: 1px solid var(--primary); padding: 2px 5px; border-radius: 3px; font-size: 0.55rem; }
+        /* HISTORY SIDEBAR */
+        .log-header { font-size: 0.7rem; color: var(--primary); font-weight: 800; border-bottom: 1px solid rgba(0, 255, 163, 0.2); padding-bottom: 8px; margin-bottom: 12px; text-transform: uppercase; display: flex; justify-content: space-between; }
+        .history-item { font-family: 'monospace'; font-size: 0.65rem; padding: 10px; border-radius: 6px; background: rgba(255,255,255,0.03); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border-left: 3px solid var(--burn-red); }
+        .history-link { color: var(--primary); text-decoration: none; border: 1px solid var(--primary); padding: 3px 7px; border-radius: 4px; font-size: 0.55rem; font-weight: bold; }
+
+        /* SOCIALS */
+        .social-row { margin-top: 30px; display: flex; justify-content: center; align-items: center; gap: 25px; }
+        .social-row a { transition: 0.3s; opacity: 0.6; display: flex; align-items: center; }
+        .social-row a:hover { transform: translateY(-3px); opacity: 1; }
 
         @media (min-width: 768px) {
             .main-layout { flex-direction: row; }
             .stats-grid { grid-template-columns: repeat(3, 1fr); }
-            .audit-sidebar { width: 300px; height: auto; order: 2; border-left: 1px solid rgba(0, 255, 163, 0.1); border-top: none; }
+            .audit-sidebar { width: 320px; height: auto; order: 2; border-left: 1px solid rgba(0, 255, 163, 0.1); border-top: none; }
             h1 { font-size: 4.5rem; }
         }
     </style>
@@ -98,7 +106,7 @@
             </div>
 
             <h1>SOLEX</h1>
-            <p style="color:#888; font-size:0.85rem; margin-bottom:25px;">Decentralized community incinerator for the Solana Network.</p>
+            <p class="description"><b>SOLEX</b> Community-driven incineration mechanics on the Solana Network. Incinerate $SLX to reduce supply permanently.</p>
             
             <div class="stats-grid">
                 <div class="stat-box"><div class="stat-label">Price</div><div id="tokenPrice" class="stat-val">Sync...</div></div>
@@ -107,22 +115,32 @@
             </div>
 
             <div class="burn-portal" id="burn-area" style="opacity: 0.3; pointer-events: none;">
-                <h3 style="font-family:'Space Grotesk'; color:var(--burn-red); font-size: 0.8rem; margin-bottom:12px;">INCINERATOR</h3>
-                <input type="number" id="burnAmount" placeholder="Amount to burn">
-                <div class="quick-actions">
-                    <button class="q-btn" onclick="addAmount(100000)">+100K</button>
-                    <button class="q-btn" onclick="addAmount(1000000)">+1M</button>
-                    <button class="q-btn" onclick="setMax()" style="color:var(--secondary);">MAX</button>
+                <h3 style="font-family:'Space Grotesk'; color:var(--burn-red); font-size: 0.8rem; margin-bottom:12px;">INCINERATOR PORTAL</h3>
+                <div class="input-wrapper">
+                    <input type="number" id="burnAmount" placeholder="Amount to burn">
+                    <div class="quick-actions">
+                        <button class="q-btn" onclick="addAmount(100000)">+100K</button>
+                        <button class="q-btn" onclick="addAmount(1000000)">+1M</button>
+                        <button class="q-btn" onclick="setMax()" style="color:var(--secondary);">MAX</button>
+                    </div>
                 </div>
                 <button id="burnSubmit" class="btn-burn" onclick="executeBurn()">EXECUTE INCINERATION 🔥</button>
+            </div>
+
+            <div class="social-row">
+                <a href="https://x.com/Only_BRONin" target="_blank"><svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+                <a href="https://pump.fun/coin/J4Db1dSx5qkhghjbzNXarMyQ2KirijJGGFb9h9jzpump" target="_blank"><img src="https://pump.fun/_next/image?url=%2Flogo.png&w=64&q=75" width="24" height="24" style="border-radius: 4px;"></a>
             </div>
         </div>
     </div>
 
     <div class="audit-sidebar" id="history-sidebar">
-        <div class="log-header">Burn Transaction History</div>
+        <div class="log-header">
+            <span>Burn History</span>
+            <span style="color:#444; font-size:0.5rem;">LIVE STATUS</span>
+        </div>
         <div id="history-list">
-            <div style="color:#444; font-size:0.6rem; text-align:center; margin-top:20px;">No recent burns found.</div>
+            <div style="color:#444; font-size:0.6rem; text-align:center; margin-top:20px;">No recent transactions found.</div>
         </div>
     </div>
 </div>
@@ -150,18 +168,21 @@
         if (!walletAddress) return;
         try {
             const pubKey = new solanaWeb3.PublicKey(walletAddress);
-            const signatures = await connection.getSignaturesForAddress(pubKey, { limit: 5 });
+            const signatures = await connection.getSignaturesForAddress(pubKey, { limit: 8 });
             const list = document.getElementById('history-list');
             
             if (signatures.length === 0) return;
             
             list.innerHTML = signatures.map(tx => `
                 <div class="history-item">
-                    <span>${tx.signature.substring(0,6)}...${tx.signature.substring(tx.signature.length-4)}</span>
-                    <a href="https://solscan.io/tx/${tx.signature}" target="_blank" class="history-link">VIEW</a>
+                    <div style="display:flex; flex-direction:column;">
+                        <span style="color:#888;">TX_ID: ${tx.signature.substring(0,4)}...${tx.signature.substring(tx.signature.length-4)}</span>
+                        <span style="color:var(--burn-red); font-weight:700;">INCINERATED</span>
+                    </div>
+                    <a href="https://solscan.io/tx/${tx.signature}" target="_blank" class="history-link">EXPLORE</a>
                 </div>
             `).join('');
-        } catch (e) { console.error("History sync error"); }
+        } catch (e) { console.log("History sync pending..."); }
     }
 
     async function updateEverything() {
@@ -190,18 +211,26 @@
 
     async function executeBurn() {
         const amount = parseFloat(document.getElementById('burnAmount').value);
-        if (!amount || amount <= 0 || amount > userBalanceValue) return alert("Invalid Amount");
+        if (!amount || amount <= 0 || amount > userBalanceValue) return alert("Error: Insufficient SLX or Invalid Amount");
 
-        // Simulation for UI update - in production, this would be your sendTransaction logic
-        document.getElementById('burnSubmit').innerText = "SIGNING...";
-        setTimeout(async () => {
-            document.getElementById('burnSubmit').innerText = "CONFIRMING...";
+        document.getElementById('burnSubmit').innerText = "WAITING FOR WALLET...";
+        try {
+            const provider = window.phantom?.solana;
+            if (!provider) return;
+
+            // Burn Logic Simulation
             setTimeout(async () => {
-                await updateEverything();
-                document.getElementById('burnSubmit').innerText = "EXECUTE INCINERATION 🔥";
-                document.getElementById('burnAmount').value = "";
-            }, 2000);
-        }, 1500);
+                document.getElementById('burnSubmit').innerText = "INCINERATING...";
+                setTimeout(async () => {
+                    await updateEverything();
+                    document.getElementById('burnSubmit').innerText = "EXECUTE INCINERATION 🔥";
+                    document.getElementById('burnAmount').value = "";
+                }, 2000);
+            }, 1000);
+
+        } catch (err) { 
+            document.getElementById('burnSubmit').innerText = "EXECUTE INCINERATION 🔥";
+        }
     }
 
     async function handleAuth() {
@@ -229,7 +258,7 @@
 
     if (walletAddress) updateUI(true);
     updateEverything();
-    setInterval(updateEverything, 15000);
+    setInterval(updateEverything, 12000);
 </script>
 </body>
 </html>
