@@ -20,7 +20,7 @@
         body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
         #vanta-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
 
-        /* MODAL OVERLAYS */
+        /* OVERLAYS */
         #pending-overlay, #success-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.92); z-index: 9999; display: none;
@@ -30,10 +30,10 @@
 
         .success-card { background: #141419; padding: 40px; border-radius: 30px; border: 2px solid var(--primary); max-width: 400px; width: 100%; box-shadow: 0 0 50px rgba(0,255,163,0.1); }
         .success-icon { font-size: 4rem; margin-bottom: 20px; color: var(--primary); }
-
         .spinner { width: 60px; height: 60px; border: 5px solid rgba(0,255,163,0.1); border-top: 5px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
+        /* UI ELEMENTS */
         .header-bar {
             height: var(--header-h); background: rgba(11, 11, 14, 0.9); border-bottom: 2px solid var(--primary);
             padding: 0 25px; display: flex; justify-content: space-between; align-items: center;
@@ -43,14 +43,13 @@
         .logo-link { font-size: 1.6rem; font-weight: 900; letter-spacing: 4px; color: var(--primary); text-decoration: none; font-family: 'Space Grotesk'; }
 
         .wallet-container { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
-        
         .balance-chip { 
             background: rgba(0, 255, 163, 0.1); padding: 5px 15px; border-radius: 50px; 
             font-size: 0.75rem; border: 1px solid var(--primary); display: none;
             color: var(--primary); font-weight: 800; font-family: 'Space Grotesk';
-            cursor: pointer; transition: 0.2s;
+            cursor: pointer; transition: 0.2s; position: relative;
         }
-        .balance-chip:hover { background: rgba(0, 255, 163, 0.2); }
+        .balance-chip:active { transform: scale(0.95); }
 
         .container { max-width: 900px; margin: 120px auto 0 auto; padding: 0 20px 60px 20px; text-align: center; }
         h1 { font-family: 'Space Grotesk'; font-size: 5rem; font-weight: 700; background: linear-gradient(90deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1; }
@@ -60,31 +59,41 @@
 
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin: 35px 0; }
         .stat-box { background: var(--card-bg); padding: 22px; border-radius: 18px; border: 1px solid rgba(255,255,255,0.1); }
-        .stat-box label { display: block; font-size: 0.65rem; color: #888; text-transform: uppercase; margin-bottom: 5px; }
         .stat-box .val { font-family: 'Space Grotesk'; font-size: 1.25rem; font-weight: 700; }
 
         .btn { display: block; width: 100%; padding: 20px; border-radius: 15px; font-weight: 700; cursor: pointer; border: none; font-family: 'Space Grotesk'; transition: 0.3s; font-size: 1.2rem; text-decoration: none; margin-bottom: 20px; text-align: center;}
         .btn-buy { background: var(--primary); color: #000; box-shadow: 0 0 20px rgba(0, 255, 163, 0.2); }
         .btn-burn { background: var(--burn-red); color: #fff; }
-        .btn-close { background: #333; color: white; margin-top: 15px; font-size: 1rem; }
 
         .burn-portal { background: var(--card-bg); padding: 35px; border-radius: 24px; border: 1px solid rgba(255,255,255,0.1); text-align: left; margin-bottom: 30px; }
         .status-console { background: #000; color: var(--primary); font-family: 'monospace'; padding: 12px; border-radius: 8px; font-size: 0.75rem; margin-bottom: 15px; border: 1px solid #333; height: 42px; display: flex; align-items: center; }
-
-        .history-panel { background: rgba(0,0,0,0.5); border-radius: 24px; border: 1px solid rgba(0, 255, 163, 0.1); padding: 25px; text-align: left; }
-        .history-header { font-family: 'Space Grotesk'; color: var(--primary); margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
-        .history-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-        .history-table th { color: #666; text-align: left; padding: 10px; border-bottom: 1px solid #222; text-transform: uppercase; font-size: 0.7rem; }
-        .history-table td { padding: 12px 10px; border-bottom: 1px solid #111; font-family: 'monospace'; }
-        
-        .solscan-link { color: var(--primary); text-decoration: none; font-size: 0.7rem; border: 1px solid var(--primary); padding: 4px 8px; border-radius: 4px; transition: 0.2s; }
-        .solscan-link:hover { background: var(--primary); color: #000; }
 
         .wallet-btn { padding: 10px 20px; border-radius: 50px; font-weight: bold; cursor: pointer; border: none; font-size: 0.85rem; transition: 0.3s; }
         #connectBtn { background: #ab9ff2; color: #000; }
         #disconnectBtn { background: rgba(255, 75, 75, 0.2); color: var(--burn-red); display: none; margin-left: 10px; border: 1px solid var(--burn-red); }
 
-        .x-fixed { position: fixed; bottom: 25px; right: 25px; background: #fff; color: #000; width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 1000; transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.4); }
+        /* FLOATING SOCIAL DOCK WITH SPIN */
+        .social-dock { 
+            position: fixed; bottom: 25px; right: 25px; 
+            display: flex; gap: 12px; z-index: 1000;
+            background: rgba(255,255,255,0.05); padding: 8px; border-radius: 50px;
+            backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1);
+        }
+        .social-link { 
+            width: 48px; height: 48px; border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center; 
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s;
+            text-decoration: none; overflow: hidden;
+        }
+        .social-link.x { background: #000; color: #fff; border: 1px solid rgba(255,255,255,0.2); }
+        .social-link.pump { background: #00ffa3; box-shadow: 0 0 10px rgba(0,255,163,0.2); }
+        .social-link:hover { transform: rotate(360deg) scale(1.15); box-shadow: 0 0 20px var(--primary); }
+        .social-link img { width: 28px; height: 28px; }
+
+        .history-panel { background: rgba(0,0,0,0.5); border-radius: 24px; border: 1px solid rgba(0, 255, 163, 0.1); padding: 25px; text-align: left; }
+        .history-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        .history-table td { padding: 12px 10px; border-bottom: 1px solid #111; font-family: 'monospace'; }
+        .solscan-link { color: var(--primary); text-decoration: none; font-size: 0.7rem; border: 1px solid var(--primary); padding: 4px 8px; border-radius: 4px; }
     </style>
 </head>
 <body>
@@ -98,10 +107,10 @@
 <div id="success-modal">
     <div class="success-card">
         <div class="success-icon">✓</div>
-        <h2 style="font-family: 'Space Grotesk'; margin-bottom: 10px;">BURN CONFIRMED</h2>
+        <h2 style="font-family: 'Space Grotesk';">BURN CONFIRMED</h2>
         <p style="color: #aaa; margin-bottom: 25px;">The tokens have been permanently removed from supply.</p>
         <a id="success-link" href="#" target="_blank" class="btn btn-buy" style="font-size: 1rem;">VIEW ON SOLSCAN ↗</a>
-        <button onclick="closeSuccess()" class="btn btn-close">Back to Terminal</button>
+        <button onclick="closeSuccess()" class="btn" style="background:#333; color:white; font-size:0.9rem;">Back to Terminal</button>
     </div>
 </div>
 
@@ -114,7 +123,7 @@
             <button id="connectBtn" class="wallet-btn" onclick="handleFullAuth()">Connect & Verify</button>
             <button id="disconnectBtn" class="wallet-btn" onclick="handleDisconnect()">Logout</button>
         </div>
-        <div id="userBalance" class="balance-chip" onclick="copyUserWallet()" title="Click to copy wallet address">0 SLX HELD</div>
+        <div id="userBalance" class="balance-chip" onclick="copyUserWallet()" title="Click to copy address">0 SLX HELD</div>
     </div>
 </div>
 
@@ -133,26 +142,26 @@
     <a href="https://pump.fun/coin/J4Db1dSx5qkhghjbzNXarMyQ2KirijJGGFb9h9jzpump" target="_blank" class="btn btn-buy">🔥 BUY ON PUMP.FUN</a>
 
     <div class="burn-portal" id="burn-area" style="opacity: 0.4; pointer-events: none;">
-        <h3 style="font-family: 'Space Grotesk'; margin-bottom: 10px;">Secure Burn Portal</h3>
+        <h3 style="font-family: 'Space Grotesk';">Secure Burn Portal</h3>
         <div class="status-console" id="console-text">> Wallet authentication required...</div>
         <input type="number" id="burnAmount" style="width:100%; background:rgba(0,0,0,0.4); border:1px solid #444; padding:18px; color:white; border-radius:12px; margin-bottom:15px; outline: none; font-size: 1.2rem;" placeholder="Amount of SLX to burn">
         <button id="burnBtn" class="btn btn-burn" onclick="executeSecureBurn()">SIGN & COMMIT BURN 🔥</button>
     </div>
 
     <div class="history-panel">
-        <div class="history-header">
-            <span>LIVE BURN FEED</span>
-            <span style="font-size: 0.6rem; color: #555;">ON-CHAIN PROOF</span>
-        </div>
-        <table class="history-table">
-            <tbody id="burn-history-body"></tbody>
-        </table>
+        <div class="history-header" style="font-family:'Space Grotesk'; color:var(--primary); margin-bottom:15px;">LIVE BURN FEED</div>
+        <table class="history-table"><tbody id="burn-history-body"></tbody></table>
     </div>
 </div>
 
-<a href="https://x.com/Only_BRONin" target="_blank" class="x-fixed">
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-</a>
+<div class="social-dock">
+    <a href="https://pump.fun/coin/J4Db1dSx5qkhghjbzNXarMyQ2KirijJGGFb9h9jzpump" target="_blank" class="social-link pump" title="View on Pump.fun">
+        <img src="https://pump.fun/_next/image?url=%2Flogo.png&w=64&q=75" alt="Pump.fun">
+    </a>
+    <a href="https://x.com/Only_BRONin" target="_blank" class="social-link x" title="Follow on X">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"></script>
@@ -164,6 +173,22 @@
     const BURN_ADDR = "1nc1nerator11111111111111111111111111111111";
     const connection = new solanaWeb3.Connection("https://api.mainnet-beta.solana.com");
     let walletAddress = null;
+
+    // SYNTH AUDIO FOR COPY
+    function playCopySound() {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(880, audioCtx.currentTime); 
+        oscillator.frequency.exponentialRampToValueAtTime(1760, audioCtx.currentTime + 0.05);
+        gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+        oscillator.start();
+        oscillator.stop(audioCtx.currentTime + 0.1);
+    }
 
     async function handleFullAuth() {
         const provider = window.phantom?.solana;
@@ -179,43 +204,42 @@
         } catch (e) { logConsole("Auth failed."); }
     }
 
-    // FUNCTION TO COPY ADDRESS
     function copyUserWallet() {
         if (!walletAddress) return;
         navigator.clipboard.writeText(walletAddress);
+        playCopySound(); // Play the digital chirp
         const bal = document.getElementById('userBalance');
         const originalText = bal.innerText;
-        bal.innerText = "ADDRESS COPIED!";
+        bal.innerText = "COPIED TO CLIPBOARD!";
         setTimeout(() => { bal.innerText = originalText; }, 1500);
+    }
+
+    async function handleDisconnect() {
+        await window.phantom?.solana.disconnect();
+        walletAddress = null; updateUI(null); logConsole("Logged out.");
     }
 
     async function executeSecureBurn() {
         const provider = window.phantom?.solana;
         const amount = document.getElementById('burnAmount').value;
         if (!amount || amount <= 0) return alert("Enter amount.");
-
         try {
             const userPub = new solanaWeb3.PublicKey(walletAddress);
             const burnDest = new solanaWeb3.PublicKey(BURN_ADDR);
             const mintPub = new solanaWeb3.PublicKey(MINT);
             const userATA = await splToken.getAssociatedTokenAddress(mintPub, userPub);
             const burnATA = await splToken.getAssociatedTokenAddress(mintPub, burnDest);
-
             const tx = new solanaWeb3.Transaction().add(
                 splToken.createTransferInstruction(userATA, burnATA, userPub, Math.floor(amount * 1000000))
             );
-
             tx.feePayer = userPub;
             tx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
             const { signature } = await provider.signAndSendTransaction(tx);
-            
             document.getElementById('pending-overlay').style.display = 'flex';
             await connection.confirmTransaction(signature);
-            
             document.getElementById('pending-overlay').style.display = 'none';
             document.getElementById('success-link').href = `https://solscan.io/tx/${signature}`;
             document.getElementById('success-modal').style.display = 'flex';
-            
             fetchUserBalance(); fetchBurnHistory(); fetchStats();
         } catch (e) { 
             document.getElementById('pending-overlay').style.display = 'none';
@@ -232,9 +256,8 @@
             const ownerPub = new solanaWeb3.PublicKey(walletAddress);
             const res = await connection.getParsedTokenAccountsByOwner(ownerPub, { mint: mintPub });
             let amount = res.value.length > 0 ? res.value[0].account.data.parsed.info.tokenAmount.uiAmount : 0;
-            const balElement = document.getElementById('userBalance');
-            balElement.innerText = `${amount.toLocaleString()} SLX HELD`;
-            balElement.style.display = "block";
+            document.getElementById('userBalance').innerText = `${amount.toLocaleString()} SLX HELD`;
+            document.getElementById('userBalance').style.display = "block";
         } catch (e) {}
     }
 
@@ -269,39 +292,22 @@
         } catch (e) {}
     }
 
-    async function handleDisconnect() {
-        // Removed the extra signMessage prompt as requested
-        await window.phantom?.solana.disconnect();
-        walletAddress = null; 
-        updateUI(null); 
-        logConsole("Logged out.");
-    }
-
     function updateUI(addr) {
-        const cBtn = document.getElementById('connectBtn');
-        const dBtn = document.getElementById('disconnectBtn');
-        const burnArea = document.getElementById('burn-area');
-        const bal = document.getElementById('userBalance');
+        const cBtn = document.getElementById('connectBtn'), dBtn = document.getElementById('disconnectBtn');
+        const burnArea = document.getElementById('burn-area'), bal = document.getElementById('userBalance');
         if (addr) {
             cBtn.innerText = addr.slice(0,4) + "..." + addr.slice(-4);
-            dBtn.style.display = "block";
-            burnArea.style.opacity = "1";
-            burnArea.style.pointerEvents = "auto";
+            dBtn.style.display = "block"; burnArea.style.opacity = "1"; burnArea.style.pointerEvents = "auto";
         } else {
             cBtn.innerText = "Connect & Verify";
-            dBtn.style.display = "none";
-            burnArea.style.opacity = "0.4";
-            burnArea.style.pointerEvents = "none";
-            bal.style.display = "none";
+            dBtn.style.display = "none"; burnArea.style.opacity = "0.4"; burnArea.style.pointerEvents = "none"; bal.style.display = "none";
         }
     }
 
     function logConsole(msg) { document.getElementById('console-text').innerText = "> " + msg; }
 
     fetchStats(); fetchBurnHistory();
-    setInterval(fetchStats, 60000); 
-    setInterval(fetchBurnHistory, 30000);
-    setInterval(fetchUserBalance, 15000);
+    setInterval(fetchStats, 60000); setInterval(fetchBurnHistory, 30000); setInterval(fetchUserBalance, 15000);
 </script>
 </body>
 </html>
