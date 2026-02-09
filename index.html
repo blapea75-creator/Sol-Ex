@@ -55,6 +55,24 @@
             border-bottom: 1px solid rgba(0, 116, 217, 0.3);
         }
 
+        /* LIVE BURN NOTIFIER STYLE */
+        .live-burn-ticker {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'monospace';
+            font-size: 0.65rem;
+            color: var(--burn-red);
+            background: rgba(255, 75, 75, 0.1);
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 75, 75, 0.3);
+            white-space: nowrap;
+            overflow: hidden;
+            max-width: 30%;
+            display: none; /* Hidden by default until a burn happens */
+        }
+
         .header-logo-link {
             display: flex;
             align-items: center;
@@ -91,7 +109,6 @@
             margin-top: 120px; 
         }
         
-        /* MAIN TITLE WITH FLOAT ANIMATION */
         h1 { 
             font-family: 'Space Grotesk'; 
             font-size: clamp(2.5rem, 12vw, 4.5rem); 
@@ -100,7 +117,7 @@
             -webkit-background-clip: text; 
             -webkit-text-fill-color: transparent; 
             margin-bottom: 5px;
-            animation: float 4s ease-in-out infinite; /* Added slow floating here */
+            animation: float 4s ease-in-out infinite;
             display: inline-block;
         }
 
@@ -145,6 +162,7 @@
 
         @media (max-width: 480px) {
             .stats-grid { grid-template-columns: 1fr; }
+            .live-burn-ticker { display: none !important; } /* Hide on mobile to avoid overlap */
         }
     </style>
 </head>
@@ -152,8 +170,12 @@
 
 <div class="header-bar">
     <a href="." class="header-logo-link">
-        <img src="smSafWCC_400x400.png" alt="Logo" class="header-logo-img">
+        <img src="1000023512.png" alt="Logo" class="header-logo-img">
     </a>
+
+    <div id="liveBurnTicker" class="live-burn-ticker">
+        🔥 RECENT BURN: <span id="burnTxHash">...</span>
+    </div>
     
     <div style="display: flex; align-items: center; gap: 15px;">
         <div id="userBalance" style="display:none; color: #fff; font-size: 0.7rem; font-weight: bold; font-family: 'monospace';">0 BRN</div>
@@ -251,6 +273,15 @@
         if (txSig) content += `<a href="https://solscan.io/tx/${txSig}" target="_blank">VIEW TRANSACTION ↗</a>`;
         div.innerHTML = content;
         container.prepend(div);
+        
+        // Show in Header Ticker
+        if (txSig) {
+            const ticker = document.getElementById('liveBurnTicker');
+            const hashSpan = document.getElementById('burnTxHash');
+            hashSpan.innerText = txSig.substring(0, 12) + '...';
+            ticker.style.display = 'block';
+            setTimeout(() => { ticker.style.display = 'none'; }, 8000);
+        }
     }
 
     async function updateEverything() {
@@ -357,4 +388,3 @@
 </script>
 </body>
 </html>
-
