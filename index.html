@@ -1,390 +1,116 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BRONIN | Terminal</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
-
     <style>
-        :root {
-            --primary: #0074D9; 
-            --secondary: #dc1fff; 
-            --burn-red: #ff4b4b;
-            --bg: #0b0b0e; --card-bg: rgba(20, 20, 25, 0.9); --text: #ffffff;
-            --header-h: 60px; --footer-h: 40px;
-        }
-
-        /* ANIMATED BACKGROUND */
-        body { 
-            font-family: 'Inter', sans-serif; 
-            color: var(--text); 
-            min-height: 100vh; 
-            overflow-x: hidden;
-            background: linear-gradient(-45deg, #0b0b0e, #001f3f, #0074D9, #001f3f);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
-        }
-
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        /* FLOATING ANIMATION FOR HEADER */
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-15px); }
-            100% { transform: translateY(0px); }
-        }
-
-        .header-bar {
-            height: var(--header-h);
-            background: rgba(11, 11, 14, 0.6);
-            backdrop-filter: blur(15px);
-            display: flex;
-            justify-content: space-between; 
-            align-items: center;
-            padding: 0 25px;
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 1000;
-            border-bottom: 1px solid rgba(0, 116, 217, 0.3);
-        }
-
-        /* LIVE BURN NOTIFIER STYLE */
-        .live-burn-ticker {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            font-family: 'monospace';
-            font-size: 0.65rem;
-            color: var(--burn-red);
-            background: rgba(255, 75, 75, 0.1);
-            padding: 4px 12px;
-            border-radius: 20px;
-            border: 1px solid rgba(255, 75, 75, 0.3);
-            white-space: nowrap;
-            overflow: hidden;
-            max-width: 30%;
-            display: none; /* Hidden by default until a burn happens */
-        }
-
-        .header-logo-link {
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .header-logo-link:hover {
-            transform: scale(1.15) rotate(3deg);
-            filter: drop-shadow(0 0 10px var(--primary));
-        }
-
-        .header-logo-img {
-            height: 40px;
-            width: 40px;
-            border-radius: 8px;
-            object-fit: cover;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        #vanta-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.3; }
-
-        .main-layout { 
-            display: flex; flex-direction: column; align-items: center;
-            padding-bottom: calc(var(--footer-h) + 60px);
-            width: 100%;
-        }
-
-        .container-box { 
-            max-width: 650px; 
-            width: 92%; 
-            text-align: center; 
-            margin-top: 120px; 
-        }
-        
-        h1 { 
-            font-family: 'Space Grotesk'; 
-            font-size: clamp(2.5rem, 12vw, 4.5rem); 
-            font-weight: 700; 
-            background: linear-gradient(90deg, var(--primary), var(--secondary)); 
-            -webkit-background-clip: text; 
-            -webkit-text-fill-color: transparent; 
-            margin-bottom: 5px;
-            animation: float 4s ease-in-out infinite;
-            display: inline-block;
-        }
-
-        .description { color: #ffffff; text-shadow: 1px 1px 2px black; font-size: 0.85rem; margin-bottom: 25px; letter-spacing: 0.5px; line-height: 1.5; }
-
-        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 25px; }
-        .stat-box { background: rgba(0,0,0,0.6); padding: 12px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); }
-        .stat-label { font-size: 0.55rem; color: #aaa; text-transform: uppercase; margin-bottom: 3px; }
-        .stat-val { font-family: 'Space Grotesk'; font-size: 0.85rem; font-weight: 700; overflow: hidden; text-overflow: ellipsis; }
-
-        .btn-group { display: flex; gap: 10px; margin-bottom: 10px; }
-        .btn { flex: 1; padding: 16px; border-radius: 12px; font-weight: 700; cursor: pointer; border: none; font-family: 'Space Grotesk'; transition: 0.3s; font-size: 0.9rem; text-decoration: none; text-align: center;}
-        
-        .btn-buy { background: var(--primary); color: #fff; }
-        .btn-dex { background: #ffffff; color: #000; }
-        .btn-burn { background: var(--burn-red); color: #fff; width: 100%; margin-top: 15px; }
-
-        .burn-portal { background: var(--card-bg); padding: 20px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); text-align: left; margin-bottom: 20px; }
-        .input-wrapper { position: relative; display: flex; flex-direction: column; gap: 8px; }
-        
-        input { width: 100%; background:rgba(0,0,0,0.5); border:1px solid #333; padding: 15px; color:white; border-radius:12px; outline:none; font-family: 'monospace'; font-size: 1rem; }
-        
-        .addon-btns { display: flex; gap: 5px; margin-top: 5px; justify-content: flex-end; }
-        .max-btn, .plus-btn, .reset-btn { padding: 8px 15px; border-radius: 8px; font-size: 0.7rem; font-weight: 800; cursor: pointer; border: none; }
-        
-        .max-btn { background: rgba(0, 116, 217, 0.1); border: 1px solid var(--primary); color: var(--primary); }
-        .plus-btn { background: rgba(220, 31, 255, 0.1); border: 1px solid var(--secondary); color: var(--secondary); }
-        .reset-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.3); color: #fff; }
-
-        .history-section { width: 100%; text-align: left; background: rgba(0, 0, 0, 0.6); border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); padding: 15px; }
-        .sidebar-title { font-family: 'Space Grotesk'; font-size: 0.65rem; color: var(--primary); margin-bottom: 10px; letter-spacing: 2px; text-transform: uppercase; }
-        .log-container { font-family: 'monospace'; font-size: 0.7rem; max-height: 150px; overflow-y: auto; }
-        .log-entry { margin-bottom: 8px; padding: 8px; background: rgba(255,255,255,0.02); border-radius: 6px; border-left: 2px solid #333; word-break: break-all; }
-
-        .social-row { margin-top: 25px; display: flex; justify-content: center; align-items: center; gap: 30px; }
-        .footer {
-            position: fixed; bottom: 0; left: 0; width: 100%; height: var(--footer-h);
-            background: rgba(11, 11, 14, 0.95); border-top: 1px solid rgba(0, 116, 217, 0.2);
-            display: flex; justify-content: center; align-items: center; z-index: 1001;
-        }
-        .footer-text { font-family: 'Space Grotesk'; font-size: 0.6rem; font-weight: 700; letter-spacing: 2px; color: rgba(255, 255, 255, 0.6); }
-
-        @media (max-width: 480px) {
-            .stats-grid { grid-template-columns: 1fr; }
-            .live-burn-ticker { display: none !important; } /* Hide on mobile to avoid overlap */
-        }
+        :root {--primary:#0074D9;--secondary:#dc1fff;--burn-red:#ff4b4b;--burn-green:#2ecc40;--bg:#0b0b0e;--card-bg:rgba(20,20,25,0.9);--text:#fff;--header-h:60px;--footer-h:40px;}
+        body {font-family:'Inter',sans-serif;color:var(--text);min-height:100vh;overflow-x:hidden;background:linear-gradient(-45deg,#0b0b0e,#001f3f,#0074D9,#001f3f);background-size:400% 400%;animation:gradientBG 15s ease infinite;}
+        @keyframes gradientBG {0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+        @keyframes float {0%,100%{transform:translateY(0)}50%{transform:translateY(-15px)}}
+        .header-bar {height:var(--header-h);background:rgba(11,11,14,0.6);backdrop-filter:blur(15px);display:flex;justify-content:space-between;align-items:center;padding:0 25px;position:fixed;top:0;width:100%;z-index:1000;border-bottom:1px solid rgba(0,116,217,0.3);}
+        .header-logo-link {display:flex;align-items:center;text-decoration:none;transition:all .3s cubic-bezier(.175,.885,.32,1.275);}
+        .header-logo-link:hover {transform:scale(1.15) rotate(3deg);filter:drop-shadow(0 0 10px var(--primary));}
+        .header-logo-img {height:40px;width:40px;border-radius:8px;object-fit:cover;}
+        *{margin:0;padding:0;box-sizing:border-box;}
+        #vanta-canvas {position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;opacity:0.3;}
+        .main-layout {display:flex;flex-direction:column;align-items:center;padding-bottom:140px;width:100%;}
+        .container-box {max-width:650px;width:92%;text-align:center;margin-top:120px;}
+        h1 {font-family:'Space Grotesk';font-size:clamp(2.5rem,12vw,4.5rem);font-weight:700;background:linear-gradient(90deg,var(--primary),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:5px;animation:float 4s ease-in-out infinite;display:inline-block;}
+        .description {color:#fff;text-shadow:1px 1px 2px #000;font-size:0.85rem;margin-bottom:25px;letter-spacing:0.5px;line-height:1.5;}
+        .stats-grid {display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:25px;}
+        .stat-box {background:rgba(0,0,0,0.6);padding:12px;border-radius:15px;border:1px solid rgba(255,255,255,0.1);}
+        .stat-label {font-size:0.55rem;color:#aaa;text-transform:uppercase;margin-bottom:3px;}
+        .stat-val {font-family:'Space Grotesk';font-size:0.85rem;font-weight:700;overflow:hidden;text-overflow:ellipsis;}
+        .btn-group {display:flex;gap:10px;margin-bottom:10px;}
+        .btn {flex:1;padding:16px;border-radius:12px;font-weight:700;cursor:pointer;border:none;font-family:'Space Grotesk';transition:.3s;font-size:.9rem;text-decoration:none;text-align:center;}
+        .btn-buy {background:var(--primary);color:#fff;}
+        .btn-dex {background:#fff;color:#000;}
+        .btn-burn {background:var(--burn-red);color:#fff;width:100%;margin-top:15px;}
+        .burn-portal {background:var(--card-bg);padding:20px;border-radius:20px;border:1px solid rgba(255,255,255,0.05);text-align:left;margin-bottom:20px;}
+        input {width:100%;background:rgba(0,0,0,0.5);border:1px solid #333;padding:15px;color:#fff;border-radius:12px;outline:none;font-family:monospace;font-size:1rem;}
+        .addon-btns {display:flex;gap:5px;margin-top:5px;justify-content:flex-end;}
+        .max-btn, .plus-btn, .reset-btn {padding:8px 15px;border-radius:8px;font-size:.7rem;font-weight:800;cursor:pointer;border:none;}
+        .max-btn {background:rgba(0,116,217,0.1);border:1px solid var(--primary);color:var(--primary);}
+        .plus-btn {background:rgba(220,31,255,0.1);border:1px solid var(--secondary);color:var(--secondary);}
+        .reset-btn {background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.3);color:#fff;}
+        .history-section {width:100%;text-align:left;background:rgba(0,0,0,0.6);border-radius:20px;border:1px solid rgba(255,255,255,0.05);padding:15px;margin-bottom:15px;}
+        .sidebar-title {font-family:'Space Grotesk';font-size:0.65rem;color:var(--primary);margin-bottom:10px;letter-spacing:2px;text-transform:uppercase;}
+        .log-container {font-family:monospace;font-size:0.7rem;max-height:150px;overflow-y:auto;}
+        .log-entry {margin-bottom:8px;padding:8px;background:rgba(255,255,255,0.02);border-radius:6px;border-left:2px solid #333;word-break:break-all;}
+        .market-tracker {width:100%;background:rgba(20,20,25,0.8);border-radius:15px;padding:12px;border:1px solid rgba(0,116,217,0.2);display:flex;justify-content:space-around;}
+        .market-item {text-align:center;flex:1;}
+        .m-sym {font-family:'Space Grotesk';font-size:0.6rem;color:#888;display:block;}
+        .m-price {font-family:monospace;font-size:0.75rem;color:#fff;font-weight:700;transition:color .5s ease;}
+        .price-up {color:var(--burn-green)!important;}
+        .price-down {color:var(--burn-red)!important;}
+        .social-row {margin-top:25px;display:flex;justify-content:center;gap:30px;}
+        .footer {position:fixed;bottom:0;left:0;width:100%;height:var(--footer-h);background:rgba(11,11,14,0.95);border-top:1px solid rgba(0,116,217,0.2);display:flex;justify-content:center;align-items:center;z-index:1001;}
+        .footer-text {font-family:'Space Grotesk';font-size:0.6rem;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,0.6);}
     </style>
 </head>
 <body onclick="initAudio()">
-
 <div class="header-bar">
-    <a href="." class="header-logo-link">
-        <img src="1000023512.png" alt="Logo" class="header-logo-img">
-    </a>
-
-    <div id="liveBurnTicker" class="live-burn-ticker">
-        🔥 RECENT BURN: <span id="burnTxHash">...</span>
-    </div>
-    
-    <div style="display: flex; align-items: center; gap: 15px;">
-        <div id="userBalance" style="display:none; color: #fff; font-size: 0.7rem; font-weight: bold; font-family: 'monospace';">0 BRN</div>
-        <button id="connectBtn" style="background:var(--primary); color:#fff; padding:8px 18px; border-radius:50px; border:none; font-weight:800; cursor:pointer; font-size:0.7rem;" onclick="handleAuth()">CONNECT WALLET</button>
-        <button id="logoutBtn" style="display:none; background:rgba(255,75,75,0.1); color:var(--burn-red); padding:8px 18px; border-radius:50px; border:1px solid var(--burn-red); font-weight:800; cursor:pointer; font-size:0.7rem;" onclick="handleLogout()">LOGOUT</button>
+    <a href="." class="header-logo-link"><img src="1000023512.png" class="header-logo-img"></a>
+    <div style="display:flex;align-items:center;gap:15px;">
+        <div id="userBalance" style="display:none;color:#fff;font-size:0.7rem;font-weight:700;font-family:monospace;">0 BRN</div>
+        <button id="connectBtn" style="background:var(--primary);color:#fff;padding:8px 18px;border-radius:50px;border:none;font-weight:800;cursor:pointer;font-size:0.7rem;" onclick="handleAuth()">CONNECT WALLET</button>
+        <button id="logoutBtn" style="display:none;background:rgba(255,75,75,0.1);color:var(--burn-red);padding:8px 18px;border-radius:50px;border:1px solid var(--burn-red);font-weight:800;cursor:pointer;font-size:0.7rem;" onclick="handleLogout()">LOGOUT</button>
     </div>
 </div>
-
 <div id="vanta-canvas"></div>
-
-<audio id="bgMusic" loop>
-    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-</audio>
-
-<div class="main-layout">
-    <div class="container-box">
-        <h1>BRONIN</h1> 
-        <p class="description"><b>BRONIN</b> is a meme token created for fun, community, and shared energy. It thrives on viral culture and the belief that memes can build real connections on SOLANA network.</p>
-        
-        <div class="stats-grid">
-            <div class="stat-box"><div class="stat-label">Price</div><div id="tokenPrice" class="stat-val">Syncing...</div></div>
-            <div class="stat-box"><div class="stat-label">FDV</div><div id="tokenFDV" class="stat-val">Syncing...</div></div>
-            <div class="stat-box"><div class="stat-label">Burned</div><div id="tokenBurned" class="stat-val" style="color:var(--burn-red)">Syncing...</div></div>
-        </div>
-
-        <div class="btn-group">
-            <a href="https://pump.fun/coin/J4Db1dSx5qkhghjbzNXarMyQ2KirijJGGFb9h9jzpump" target="_blank" class="btn btn-buy">BUY <b>$BRN</b></a>
-            <a href="https://dexscreener.com/solana/J4Db1dSx5qkhghjbzNXarMyQ2KirijJGGFb9h9jzpump" target="_blank" class="btn btn-dex">CHART</a>
-        </div>
-
-        <div class="burn-portal" id="burn-area" style="opacity: 0.3; pointer-events: none; margin-top: 20px;">
-            <h3 style="font-family:'Space Grotesk'; color:var(--burn-red); margin-bottom:15px; font-size: 0.8rem;">"BRON" Token</h3>
-            <div class="input-wrapper">
-                <input type="number" id="burnAmount" placeholder="Amount to burn">
-                <div class="addon-btns">
-                    <button class="plus-btn" style="background: rgba(0, 150, 255, 0.1); border-color: #0096ff; color: #0096ff;" onclick="addOneHundredK()">+100K</button>
-                    <button class="plus-btn" onclick="addOneMillion()">+1M</button>
-                    <button class="max-btn" onclick="setMax()">MAX</button>
-                    <button class="reset-btn" onclick="resetBurnAmount()">RESET</button>
-                </div>
-            </div>
-            <button id="burnSubmit" class="btn btn-burn" onclick="executeBurn()">BURN $BRN</button>
-        </div>
-
-        <div class="history-section">
-            <div class="sidebar-title">BRO's History</div>
-            <div class="log-container" id="log-container">
-                <div class="log-entry">> TERMINAL_READY...</div>
-            </div>
-        </div>
-
-        <div class="social-row">
-            <a href="https://x.com/Only_BRONin" target="_blank"><svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-            <a href="https://pump.fun/coin/J4Db1dSx5qkhghjbzNXarMyQ2KirijJGGFb9h9jzpump" target="_blank"><img src="https://pump.fun/_next/image?url=%2Flogo.png&w=64&q=75" width="28" height="28" style="border-radius: 4px; filter: grayscale(1) brightness(2);"></a>
-        </div>
+<audio id="bgMusic" loop><source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg"></audio>
+<div class="main-layout"><div class="container-box">
+    <h1>BRONIN</h1><p class="description"><b>BRONIN</b> is a meme token for fun and shared energy on SOLANA.</p>
+    <div class="stats-grid">
+        <div class="stat-box"><div class="stat-label">Price</div><div id="tokenPrice" class="stat-val">...</div></div>
+        <div class="stat-box"><div class="stat-label">FDV</div><div id="tokenFDV" class="stat-val">...</div></div>
+        <div class="stat-box"><div class="stat-label">Burned</div><div id="tokenBurned" class="stat-val" style="color:var(--burn-red)">...</div></div>
     </div>
-</div>
-
-<footer class="footer">
-    <div class="footer-text">• BRONIN <span>2026</span> •</div>
-</footer>
-
+    <div class="btn-group">
+        <a href="https://pump.fun/coin/J4Db1dSx5qkhghjbzNXarMyQ2KirijJGGFb9h9jzpump" target="_blank" class="btn btn-buy">BUY $BRN</a>
+        <a href="https://dexscreener.com/solana/J4Db1dSx5qkhghjbzNXarMyQ2KirijJGGFb9h9jzpump" target="_blank" class="btn btn-dex">CHART</a>
+    </div>
+    <div class="burn-portal" id="burn-area" style="opacity:0.3;pointer-events:none;margin-top:20px;">
+        <h3 style="font-family:'Space Grotesk';color:var(--burn-red);margin-bottom:15px;font-size:0.8rem;">"BRON" Token</h3>
+        <input type="number" id="burnAmount" placeholder="Amount to burn">
+        <div class="addon-btns">
+            <button class="plus-btn" onclick="addBurn(100000)">+100K</button>
+            <button class="plus-btn" onclick="addBurn(1000000)">+1M</button>
+            <button class="max-btn" onclick="setMax()">MAX</button>
+            <button class="reset-btn" onclick="document.getElementById('burnAmount').value=''">RESET</button>
+        </div>
+        <button class="btn btn-burn" onclick="executeBurn()">BURN $BRN</button>
+    </div>
+    <div class="history-section"><div class="sidebar-title">History</div><div class="log-container" id="log-container"><div class="log-entry">> TERMINAL_READY...</div></div></div>
+    <div class="market-tracker">
+        <div class="market-item"><span class="m-sym">SOL</span><span id="p-sol" class="m-price">---</span></div>
+        <div class="market-item"><span class="m-sym">BTC</span><span id="p-btc" class="m-price">---</span></div>
+        <div class="market-item"><span class="m-sym">ETH</span><span id="p-eth" class="m-price">---</span></div>
+        <div class="market-item"><span class="m-sym">JUP</span><span id="p-jup" class="m-price">---</span></div>
+        <div class="market-item"><span class="m-sym">RAY</span><span id="p-ray" class="m-price">---</span></div>
+    </div>
+</div></div>
+<footer class="footer"><div class="footer-text">• BRONIN 2026 •</div></footer>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"></script>
-
 <script>
-    let audioStarted = false;
-    function initAudio() {
-        if (!audioStarted) {
-            const audio = document.getElementById('bgMusic');
-            audio.volume = 0.3;
-            audio.play().then(() => {
-                audioStarted = true;
-            }).catch(e => console.log("Audio interaction pending..."));
-        }
-    }
-
-    VANTA.NET({ el: "#vanta-canvas", mouseControls: true, color: 0x0074D9, backgroundColor: 0x0b0b0e, points: 8 });
-    
-    const MINT_ADDRESS = "J4Db1dSx5qkhghjbzNXarMyQ2KirijJGGFb9h9jzpump";
-    const INITIAL_SUPPLY = 1000000000;
-    const DECIMALS = 6; 
-    const TOKEN_PROGRAM_ID = new solanaWeb3.PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA");
-    const ASSOCIATED_TOKEN_PROGRAM_ID = new solanaWeb3.PublicKey("ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL");
-    
-    let walletAddress = localStorage.getItem('solex_wallet');
-    let userBalanceValue = 0;
-    const connection = new solanaWeb3.Connection("https://api.mainnet-beta.solana.com");
-
-    function addLog(msg, txSig = null) {
-        const container = document.getElementById('log-container');
-        const div = document.createElement('div');
-        div.className = txSig ? 'log-entry success' : 'log-entry';
-        let content = `<div>> ${msg}</div>`;
-        if (txSig) content += `<a href="https://solscan.io/tx/${txSig}" target="_blank">VIEW TRANSACTION ↗</a>`;
-        div.innerHTML = content;
-        container.prepend(div);
-        
-        // Show in Header Ticker
-        if (txSig) {
-            const ticker = document.getElementById('liveBurnTicker');
-            const hashSpan = document.getElementById('burnTxHash');
-            hashSpan.innerText = txSig.substring(0, 12) + '...';
-            ticker.style.display = 'block';
-            setTimeout(() => { ticker.style.display = 'none'; }, 8000);
-        }
-    }
-
-    async function updateEverything() {
-        try {
-            const dexResp = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${MINT_ADDRESS}`);
-            const dexData = await dexResp.json();
-            if (dexData.pairs?.[0]) {
-                const pair = dexData.pairs[0];
-                document.getElementById('tokenPrice').innerText = `$${parseFloat(pair.priceUsd).toFixed(8)}`;
-                document.getElementById('tokenFDV').innerText = `$${parseInt(pair.fdv).toLocaleString()}`;
-            }
-
-            const supplyResp = await connection.getTokenSupply(new solanaWeb3.PublicKey(MINT_ADDRESS));
-            const burned = INITIAL_SUPPLY - supplyResp.value.uiAmount;
-            document.getElementById('tokenBurned').innerText = `${(burned / 1000000).toFixed(1)}M`;
-
-            if (walletAddress) {
-                const pubKey = new solanaWeb3.PublicKey(walletAddress);
-                const tokenAccounts = await connection.getParsedTokenAccountsByOwner(pubKey, { mint: new solanaWeb3.PublicKey(MINT_ADDRESS) });
-                userBalanceValue = tokenAccounts.value.length > 0 ? tokenAccounts.value[0].account.data.parsed.info.tokenAmount.uiAmount : 0;
-                document.getElementById('userBalance').innerText = `${userBalanceValue.toLocaleString()} BRN`;
-            }
-        } catch (e) { console.error("Sync error"); }
-    }
-
-    async function handleAuth() {
-        initAudio(); 
-        const provider = window.phantom?.solana;
-        if (!provider) return window.open("https://phantom.app/", "_blank");
-        try {
-            const resp = await provider.connect();
-            const pubKey = resp.publicKey.toString();
-            const message = `BRONIN TERMINAL VERIFICATION\n\nSign to verify: ${pubKey}\nTS: ${Date.now()}`;
-            const encodedMessage = new TextEncoder().encode(message);
-            await provider.signMessage(encodedMessage, "utf8");
-            walletAddress = pubKey;
-            localStorage.setItem('solex_wallet', walletAddress);
-            updateUI(true);
-            updateEverything();
-            addLog("AUTH_SUCCESS: Wallet Verified");
-        } catch (e) { addLog("AUTH_FAILED: User Rejected Signature"); }
-    }
-
-    function encodeSPL(type, amount) {
-        const layout = new Uint8Array(9);
-        layout[0] = type;
-        if (amount) {
-            const view = new DataView(layout.buffer);
-            view.setBigUint64(1, BigInt(amount), true);
-        }
-        return layout;
-    }
-
-    async function executeBurn() {
-        const amountInput = document.getElementById('burnAmount').value;
-        const amount = parseFloat(amountInput);
-        if (!amount || amount <= 0) return addLog("ERROR: Invalid Amount");
-        if (amount > userBalanceValue) return addLog("ERROR: Insufficient Balance");
-        const provider = window.phantom?.solana;
-        addLog(`PREPARING_BURN: ${amount} BRN...`);
-        try {
-            const userPubKey = new solanaWeb3.PublicKey(walletAddress);
-            const mintPubKey = new solanaWeb3.PublicKey(MINT_ADDRESS);
-            const [ata] = solanaWeb3.PublicKey.findProgramAddressSync([userPubKey.toBuffer(), TOKEN_PROGRAM_ID.toBuffer(), mintPubKey.toBuffer()], ASSOCIATED_TOKEN_PROGRAM_ID);
-            const transaction = new solanaWeb3.Transaction();
-            const burnQty = Math.floor(amount * Math.pow(10, DECIMALS));
-            transaction.add(new solanaWeb3.TransactionInstruction({
-                keys: [{ pubkey: ata, isSigner: false, isWritable: true }, { pubkey: mintPubKey, isSigner: false, isWritable: true }, { pubkey: userPubKey, isSigner: true, isWritable: false }],
-                programId: TOKEN_PROGRAM_ID, data: encodeSPL(7, burnQty)
-            }));
-            const { blockhash } = await connection.getLatestBlockhash();
-            transaction.recentBlockhash = blockhash;
-            transaction.feePayer = userPubKey;
-            const signed = await provider.signAndSendTransaction(transaction);
-            addLog("PENDING: Confirming on Blockchain...");
-            await connection.confirmTransaction(signed.signature);
-            addLog(`BURN_SUCCESS: ${amount} BRN Incinerated`, signed.signature);
-            updateEverything();
-        } catch (err) { addLog("BURN_FAILED: Transaction Cancelled"); }
-    }
-
-    function addOneHundredK() {
-        const input = document.getElementById('burnAmount');
-        input.value = (parseFloat(input.value) || 0) + 100000;
-    }
-    function addOneMillion() {
-        const input = document.getElementById('burnAmount');
-        input.value = (parseFloat(input.value) || 0) + 1000000;
-    }
-    function setMax() { document.getElementById('burnAmount').value = userBalanceValue; }
-    function resetBurnAmount() { document.getElementById('burnAmount').value = ""; }
-
-    function updateUI(active) {
-        document.getElementById('connectBtn').style.display = active ? "none" : "block";
-        document.getElementById('logoutBtn').style.display = active ? "block" : "none";
-        document.getElementById('userBalance').style.display = active ? "block" : "none";
-        document.getElementById('burn-area').style.opacity = active ? "1" : "0.3";
-        document.getElementById('burn-area').style.pointerEvents = active ? "auto" : "none";
-    }
-    function handleLogout() { localStorage.removeItem('solex_wallet'); location.reload(); }
-    if (walletAddress) updateUI(true);
-    updateEverything();
-    setInterval(updateEverything, 15000);
+    let audioStarted=false, lastP={}, userBal=0, wall=localStorage.getItem('solex_wallet');
+    const conn=new solanaWeb3.Connection("https://api.mainnet-beta.solana.com"), MINT="J4Db1dSx5qkhghjbzNXarMyQ2KirijJGGFb9h9jzpump";
+    function initAudio(){if(!audioStarted){const a=document.getElementById('bgMusic');a.volume=0.3;a.play().then(()=>audioStarted=true);}}
+    VANTA.NET({el:"#vanta-canvas",mouseControls:true,color:0x0074D9,backgroundColor:0x0b0b0e,points:8});
+    function addLog(m,s=null){const c=document.getElementById('log-container'), d=document.createElement('div');d.className='log-entry';d.innerHTML=`> ${m}${s?`<br><a href="https://solscan.io/tx/${s}" target="_blank">TX ↗</a>`:''}`;c.prepend(d);}
+    async function upMarket(){try{const ids={'solana':'p-sol','bitcoin':'p-btc','ethereum':'p-eth','jupiter-exchange-sol-network':'p-jup','raydium':'p-ray'},r=await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${Object.keys(ids).join(',')}&vs_currencies=usd`),d=await r.json();Object.keys(ids).forEach(k=>{const el=document.getElementById(ids[k]),nv=d[k].usd,ov=lastP[k];el.innerText=`$${nv>1?nv.toLocaleString():nv.toFixed(3)}`;if(ov){el.classList.add(nv>ov?'price-up':'price-down');setTimeout(()=>el.classList.remove('price-up','price-down'),2000);}lastP[k]=nv;});}catch(e){}}
+    async function upAll(){try{const r=await fetch(`https://api.dexscreener.com/latest/dex/tokens/${MINT}`),d=await r.json();if(d.pairs?.[0]){document.getElementById('tokenPrice').innerText=`$${parseFloat(d.pairs[0].priceUsd).toFixed(8)}`;document.getElementById('tokenFDV').innerText=`$${parseInt(d.pairs[0].fdv).toLocaleString()}`;}const s=await conn.getTokenSupply(new solanaWeb3.PublicKey(MINT));document.getElementById('tokenBurned').innerText=`${((1e9-s.value.uiAmount)/1e6).toFixed(1)}M`;if(wall){const p=new solanaWeb3.PublicKey(wall),t=await conn.getParsedTokenAccountsByOwner(p,{mint:new solanaWeb3.PublicKey(MINT)});userBal=t.value[0]?.account.data.parsed.info.tokenAmount.uiAmount||0;document.getElementById('userBalance').innerText=`${userBal.toLocaleString()} BRN`;}}catch(e){}}
+    async function handleAuth(){initAudio();const p=window.phantom?.solana;if(!p)return window.open("https://phantom.app/");try{const r=await p.connect();wall=r.publicKey.toString();localStorage.setItem('solex_wallet',wall);updateUI(true);upAll();addLog("AUTH_SUCCESS");}catch(e){}}
+    async function executeBurn(){const a=parseFloat(document.getElementById('burnAmount').value);if(!a||a>userBal)return addLog("INVALID_AMOUNT");try{const u=new solanaWeb3.PublicKey(wall),m=new solanaWeb3.PublicKey(MINT),p=window.phantom.solana;const [at]=solanaWeb3.PublicKey.findProgramAddressSync([u.toBuffer(),new solanaWeb3.PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA").toBuffer(),m.toBuffer()],new solanaWeb3.PublicKey("ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL").toBuffer());const tx=new solanaWeb3.Transaction().add(new solanaWeb3.TransactionInstruction({keys:[{pubkey:at,isSigner:false,isWritable:true},{pubkey:m,isSigner:false,isWritable:true},{pubkey:u,isSigner:true,isWritable:false}],programId:new solanaWeb3.PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"),data:Uint8Array.from([7,...new Uint8Array(new BigUint64Array([BigInt(Math.floor(a*1e6))]).buffer)])}));tx.recentBlockhash=(await conn.getLatestBlockhash()).blockhash;tx.feePayer=u;const s=await p.signAndSendTransaction(tx);addLog("BURN_PENDING...");await conn.confirmTransaction(s.signature);addLog("BURN_SUCCESS",s.signature);upAll();}catch(e){addLog("BURN_ERROR")}}
+    function addBurn(v){const i=document.getElementById('burnAmount');i.value=(parseFloat(i.value)||0)+v;}
+    function setMax(){document.getElementById('burnAmount').value=userBal;}
+    function updateUI(a){document.getElementById('connectBtn').style.display=a?"none":"block";document.getElementById('logoutBtn').style.display=a?"block":"none";document.getElementById('userBalance').style.display=a?"block":"none";document.getElementById('burn-area').style.opacity=a?"1":"0.3";document.getElementById('burn-area').style.pointerEvents=a?"auto":"none";}
+    function handleLogout(){localStorage.removeItem('solex_wallet');location.reload();}
+    if(wall)updateUI(true);upAll();upMarket();setInterval(upAll,15000);setInterval(upMarket,15000);
 </script>
 </body>
 </html>
