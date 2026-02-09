@@ -14,9 +14,37 @@
             --header-h: 80px; --footer-h: 40px;
         }
 
+        /* NEW ANIMATED BACKGROUND STYLE */
+        body { 
+            font-family: 'Inter', sans-serif; 
+            color: var(--text); 
+            min-height: 100vh; 
+            overflow-x: hidden;
+            /* Blue and White Gradient */
+            background: linear-gradient(-45deg, #001f3f, #0074D9, #ffffff, #7FDBFF);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* BANNER STYLE */
+        .page-banner {
+            width: 100%;
+            height: auto;
+            display: block;
+            position: relative;
+            z-index: 1002; /* Sits above everything */
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
-        #vanta-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+        
+        #vanta-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.4; }
 
         /* HEADER */
         .header-bar {
@@ -88,11 +116,11 @@
 
         .container-box { max-width: 650px; width: 92%; text-align: center; margin-top: 20px; }
         h1 { font-family: 'Space Grotesk'; font-size: clamp(2.5rem, 12vw, 4.5rem); font-weight: 700; background: linear-gradient(90deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 5px; }
-        .description { color: #888; font-size: 0.85rem; margin-bottom: 25px; letter-spacing: 0.5px; line-height: 1.5; }
+        .description { color: #ffffff; text-shadow: 1px 1px 2px black; font-size: 0.85rem; margin-bottom: 25px; letter-spacing: 0.5px; line-height: 1.5; }
 
         .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 25px; }
-        .stat-box { background: rgba(255,255,255,0.03); padding: 12px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.08); }
-        .stat-label { font-size: 0.55rem; color: #555; text-transform: uppercase; margin-bottom: 3px; }
+        .stat-box { background: rgba(0,0,0,0.6); padding: 12px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.2); }
+        .stat-label { font-size: 0.55rem; color: #aaa; text-transform: uppercase; margin-bottom: 3px; }
         .stat-val { font-family: 'Space Grotesk'; font-size: 0.85rem; font-weight: 700; overflow: hidden; text-overflow: ellipsis; }
 
         .btn-group { display: flex; gap: 10px; margin-bottom: 10px; }
@@ -104,15 +132,12 @@
         .burn-portal { background: var(--card-bg); padding: 20px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); text-align: left; margin-bottom: 20px; }
         .input-wrapper { position: relative; display: flex; flex-direction: column; gap: 8px; }
         
-        /* REMOVE ARROW SPINNERS */
         input[type=number]::-webkit-inner-spin-button, 
         input[type=number]::-webkit-outer-spin-button { 
             -webkit-appearance: none; 
             margin: 0; 
         }
-        input[type=number] {
-            -moz-appearance: textfield; /* Firefox */
-        }
+        input[type=number] { -moz-appearance: textfield; }
 
         input { width: 100%; background:rgba(0,0,0,0.5); border:1px solid #333; padding: 15px; color:white; border-radius:12px; outline:none; font-family: 'monospace'; font-size: 1rem; }
         
@@ -122,7 +147,7 @@
         .plus-btn { background: rgba(220, 31, 255, 0.1); border: 1px solid var(--secondary); color: var(--secondary); }
         .reset-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.3); color: #fff; }
 
-        .history-section { width: 100%; text-align: left; background: rgba(0, 0, 0, 0.4); border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); padding: 15px; }
+        .history-section { width: 100%; text-align: left; background: rgba(0, 0, 0, 0.6); border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); padding: 15px; }
         .sidebar-title { font-family: 'Space Grotesk'; font-size: 0.65rem; color: var(--primary); margin-bottom: 10px; letter-spacing: 2px; text-transform: uppercase; }
         .log-container { font-family: 'monospace'; font-size: 0.7rem; max-height: 150px; overflow-y: auto; }
         .log-entry { margin-bottom: 8px; padding: 8px; background: rgba(255,255,255,0.02); border-radius: 6px; border-left: 2px solid #333; word-break: break-all; }
@@ -135,7 +160,6 @@
         }
         .footer-text { font-family: 'Space Grotesk'; font-size: 0.6rem; font-weight: 700; letter-spacing: 2px; color: rgba(255, 255, 255, 0.6); }
 
-        /* MOBILE ADJUSTMENTS */
         @media (max-width: 480px) {
             .stats-grid { grid-template-columns: 1fr; }
             .header-bar { height: 60px; }
@@ -146,6 +170,8 @@
     </style>
 </head>
 <body onclick="initAudio()">
+
+<img src="1000023513.jpg" alt="BRONIN BANNER" class="page-banner">
 
 <div id="vanta-canvas"></div>
 
@@ -215,7 +241,6 @@
 <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"></script>
 
 <script>
-    // Audio Start Logic
     let audioStarted = false;
     function initAudio() {
         if (!audioStarted) {
@@ -351,23 +376,4 @@
 
     function updateUI(active) {
         document.getElementById('connectBtn').style.display = active ? "none" : "block";
-        document.getElementById('logoutBtn').style.display = active ? "block" : "none";
-        document.getElementById('userBalance').style.display = active ? "block" : "none";
-        document.getElementById('copyBtn').style.display = active ? "block" : "none";
-        document.getElementById('burn-area').style.opacity = active ? "1" : "0.3";
-        document.getElementById('burn-area').style.pointerEvents = active ? "auto" : "none";
-    }
-    function handleLogout() { localStorage.removeItem('solex_wallet'); location.reload(); }
-    function copyWallet() {
-        navigator.clipboard.writeText(walletAddress);
-        document.getElementById('copyBtn').innerText = "COPIED!";
-        setTimeout(() => { document.getElementById('copyBtn').innerText = "Copy"; }, 2000);
-    }
-    if (walletAddress) updateUI(true);
-    updateEverything();
-    setInterval(updateEverything, 15000);
-</script>
-</body>
-</html>
-
-
+        document.getElementById('logoutBtn')
