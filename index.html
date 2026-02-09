@@ -46,7 +46,7 @@
         .m-price {font-family:monospace;font-size:0.75rem;color:#fff;font-weight:700;transition:color .5s ease;}
         .price-up {color:var(--burn-green)!important;}
         .price-down {color:var(--burn-red)!important;}
-        .social-row {margin-top:25px;display:flex;justify-content:center;gap:30px;}
+        .social-row {margin-top:25px;display:flex;justify-content:center;align-items:center;gap:30px;}
         .footer {position:fixed;bottom:0;left:0;width:100%;height:var(--footer-h);background:rgba(11,11,14,0.95);border-top:1px solid rgba(0,116,217,0.2);display:flex;justify-content:center;align-items:center;z-index:1001;}
         .footer-text {font-family:'Space Grotesk';font-size:0.6rem;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,0.6);}
     </style>
@@ -89,8 +89,12 @@
         <div class="market-item"><span class="m-sym">SOL</span><span id="p-sol" class="m-price">---</span></div>
         <div class="market-item"><span class="m-sym">BTC</span><span id="p-btc" class="m-price">---</span></div>
         <div class="market-item"><span class="m-sym">ETH</span><span id="p-eth" class="m-price">---</span></div>
-        <div class="market-item"><span class="m-sym">JUP</span><span id="p-jup" class="m-price">---</span></div>
-        <div class="market-item"><span class="m-sym">RAY</span><span id="p-ray" class="m-price">---</span></div>
+        <div class="market-item"><span class="m-sym">PUMP</span><span id="p-pmp" class="m-price">---</span></div>
+        <div class="market-item"><span class="m-sym">RONIN</span><span id="p-ron" class="m-price">---</span></div>
+    </div>
+    <div class="social-row">
+        <a href="https://x.com/Only_BRONin" target="_blank"><svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+        <a href="https://pump.fun/coin/J4Db1dSx5qkhghjbzNXarMyQ2KirijJGGFb9h9jzpump" target="_blank"><img src="https://pump.fun/_next/image?url=%2Flogo.png&w=64&q=75" width="28" height="28" style="border-radius:4px;filter:grayscale(1) brightness(2);"></a>
     </div>
 </div></div>
 <footer class="footer"><div class="footer-text">• BRONIN 2026 •</div></footer>
@@ -102,7 +106,7 @@
     function initAudio(){if(!audioStarted){const a=document.getElementById('bgMusic');a.volume=0.3;a.play().then(()=>audioStarted=true);}}
     VANTA.NET({el:"#vanta-canvas",mouseControls:true,color:0x0074D9,backgroundColor:0x0b0b0e,points:8});
     function addLog(m,s=null){const c=document.getElementById('log-container'), d=document.createElement('div');d.className='log-entry';d.innerHTML=`> ${m}${s?`<br><a href="https://solscan.io/tx/${s}" target="_blank">TX ↗</a>`:''}`;c.prepend(d);}
-    async function upMarket(){try{const ids={'solana':'p-sol','bitcoin':'p-btc','ethereum':'p-eth','jupiter-exchange-sol-network':'p-jup','raydium':'p-ray'},r=await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${Object.keys(ids).join(',')}&vs_currencies=usd`),d=await r.json();Object.keys(ids).forEach(k=>{const el=document.getElementById(ids[k]),nv=d[k].usd,ov=lastP[k];el.innerText=`$${nv>1?nv.toLocaleString():nv.toFixed(3)}`;if(ov){el.classList.add(nv>ov?'price-up':'price-down');setTimeout(()=>el.classList.remove('price-up','price-down'),2000);}lastP[k]=nv;});}catch(e){}}
+    async function upMarket(){try{const ids={'solana':'p-sol','bitcoin':'p-btc','ethereum':'p-eth','pump-fun':'p-pmp','ronin':'p-ron'},r=await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${Object.keys(ids).join(',')}&vs_currencies=usd`),d=await r.json();Object.keys(ids).forEach(k=>{const el=document.getElementById(ids[k]),nv=d[k].usd,ov=lastP[k];el.innerText=`$${nv>1?nv.toLocaleString():nv.toFixed(3)}`;if(ov){el.classList.add(nv>ov?'price-up':'price-down');setTimeout(()=>el.classList.remove('price-up','price-down'),2000);}lastP[k]=nv;});}catch(e){}}
     async function upAll(){try{const r=await fetch(`https://api.dexscreener.com/latest/dex/tokens/${MINT}`),d=await r.json();if(d.pairs?.[0]){document.getElementById('tokenPrice').innerText=`$${parseFloat(d.pairs[0].priceUsd).toFixed(8)}`;document.getElementById('tokenFDV').innerText=`$${parseInt(d.pairs[0].fdv).toLocaleString()}`;}const s=await conn.getTokenSupply(new solanaWeb3.PublicKey(MINT));document.getElementById('tokenBurned').innerText=`${((1e9-s.value.uiAmount)/1e6).toFixed(1)}M`;if(wall){const p=new solanaWeb3.PublicKey(wall),t=await conn.getParsedTokenAccountsByOwner(p,{mint:new solanaWeb3.PublicKey(MINT)});userBal=t.value[0]?.account.data.parsed.info.tokenAmount.uiAmount||0;document.getElementById('userBalance').innerText=`${userBal.toLocaleString()} BRN`;}}catch(e){}}
     async function handleAuth(){initAudio();const p=window.phantom?.solana;if(!p)return window.open("https://phantom.app/");try{const r=await p.connect();wall=r.publicKey.toString();localStorage.setItem('solex_wallet',wall);updateUI(true);upAll();addLog("AUTH_SUCCESS");}catch(e){}}
     async function executeBurn(){const a=parseFloat(document.getElementById('burnAmount').value);if(!a||a>userBal)return addLog("INVALID_AMOUNT");try{const u=new solanaWeb3.PublicKey(wall),m=new solanaWeb3.PublicKey(MINT),p=window.phantom.solana;const [at]=solanaWeb3.PublicKey.findProgramAddressSync([u.toBuffer(),new solanaWeb3.PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA").toBuffer(),m.toBuffer()],new solanaWeb3.PublicKey("ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL").toBuffer());const tx=new solanaWeb3.Transaction().add(new solanaWeb3.TransactionInstruction({keys:[{pubkey:at,isSigner:false,isWritable:true},{pubkey:m,isSigner:false,isWritable:true},{pubkey:u,isSigner:true,isWritable:false}],programId:new solanaWeb3.PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"),data:Uint8Array.from([7,...new Uint8Array(new BigUint64Array([BigInt(Math.floor(a*1e6))]).buffer)])}));tx.recentBlockhash=(await conn.getLatestBlockhash()).blockhash;tx.feePayer=u;const s=await p.signAndSendTransaction(tx);addLog("BURN_PENDING...");await conn.confirmTransaction(s.signature);addLog("BURN_SUCCESS",s.signature);upAll();}catch(e){addLog("BURN_ERROR")}}
