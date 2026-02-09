@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SolEx | Terminal</title>
+    <title>BRONIN | Terminal</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
 
@@ -154,9 +154,9 @@
 </audio>
 
 <div class="header-bar">
-    <a href="#" class="logo-link">SOLEX</a>
+    <a href="#" class="logo-link">BRONIN</a>
     <div class="wallet-actions">
-        <div id="userBalance" class="balance-chip">0 SLX</div>
+        <div id="userBalance" class="balance-chip">0 BRN</div>
         <button id="copyBtn" class="copy-btn" onclick="copyWallet()">Copy</button>
         <button id="connectBtn" style="background:var(--primary); color:#000; padding:8px 16px; border-radius:50px; border:none; font-weight:800; cursor:pointer; font-size:0.7rem;" onclick="handleAuth()">CONNECT</button>
         <button id="logoutBtn" style="display:none; background:rgba(255,75,75,0.1); color:var(--burn-red); padding:8px 16px; border-radius:50px; border:1px solid var(--burn-red); font-weight:800; cursor:pointer; font-size:0.7rem;" onclick="handleLogout()">LOGOUT</button>
@@ -166,7 +166,7 @@
 <div class="main-layout">
     <div class="container-box">
         <h1>SOLEX</h1>
-        <p class="description"><b>SOLEX</b> is a meme token created for fun, community, and shared energy. It thrives on viral culture and the belief that memes can build real connections on SOLANA network.</p>
+        <p class="description"><b>BRONIN</b> is a meme token created for fun, community, and shared energy. It thrives on viral culture and the belief that memes can build real connections on SOLANA network.</p>
         
         <div class="stats-grid">
             <div class="stat-box"><div class="stat-label">Price</div><div id="tokenPrice" class="stat-val">Syncing...</div></div>
@@ -175,12 +175,12 @@
         </div>
 
         <div class="btn-group">
-            <a href="https://pump.fun/coin/J4Db1dSx5qkhghjbzNXarMyQ2KirijJGGFb9h9jzpump" target="_blank" class="btn btn-buy">BUY <b>$SLX</b></a>
+            <a href="https://pump.fun/coin/J4Db1dSx5qkhghjbzNXarMyQ2KirijJGGFb9h9jzpump" target="_blank" class="btn btn-buy">BUY <b>$BRN</b></a>
             <a href="https://dexscreener.com/solana/J4Db1dSx5qkhghjbzNXarMyQ2KirijJGGFb9h9jzpump" target="_blank" class="btn btn-dex">CHART</a>
         </div>
 
         <div class="burn-portal" id="burn-area" style="opacity: 0.3; pointer-events: none;">
-            <h3 style="font-family:'Space Grotesk'; color:var(--burn-red); margin-bottom:15px; font-size: 0.8rem;">Burn Token</h3>
+            <h3 style="font-family:'Space Grotesk'; color:var(--burn-red); margin-bottom:15px; font-size: 0.8rem;">"BRON" Token</h3>
             <div class="input-wrapper">
                 <input type="number" id="burnAmount" placeholder="Amount to burn">
                 <div class="addon-btns">
@@ -190,11 +190,11 @@
                     <button class="reset-btn" onclick="resetBurnAmount()">RESET</button>
                 </div>
             </div>
-            <button id="burnSubmit" class="btn btn-burn" onclick="executeBurn()">BURN $SLX</button>
+            <button id="burnSubmit" class="btn btn-burn" onclick="executeBurn()">BURN $BRN</button>
         </div>
 
         <div class="history-section">
-            <div class="sidebar-title">Burn History</div>
+            <div class="sidebar-title">BRON History</div>
             <div class="log-container" id="log-container">
                 <div class="log-entry">> TERMINAL_READY...</div>
             </div>
@@ -208,7 +208,7 @@
 </div>
 
 <footer class="footer">
-    <div class="footer-text">• SOLEX <span>2026</span> •</div>
+    <div class="footer-text">• BRONIN <span>2026</span> •</div>
 </footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
@@ -369,3 +369,4 @@
 </script>
 </body>
 </html>
+
