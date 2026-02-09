@@ -33,7 +33,13 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* HEADER BAR WITH CLICKABLE LOGO */
+        /* FLOATING ANIMATION FOR HEADER */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+
         .header-bar {
             height: var(--header-h);
             background: rgba(11, 11, 14, 0.6);
@@ -56,7 +62,6 @@
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        /* LOGO HOVER ANIMATION ADDED HERE */
         .header-logo-link:hover {
             transform: scale(1.15) rotate(3deg);
             filter: drop-shadow(0 0 10px var(--primary));
@@ -69,19 +74,6 @@
             object-fit: cover;
         }
 
-        .page-banner {
-            width: 100%;
-            max-width: 1500px;
-            height: auto;
-            aspect-ratio: 1500 / 500;
-            object-fit: cover;
-            display: block;
-            margin: var(--header-h) auto 0 auto;
-            position: relative;
-            z-index: 10;
-            box-shadow: 0 4px 25px rgba(0,0,0,0.6);
-        }
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         #vanta-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.3; }
@@ -92,8 +84,26 @@
             width: 100%;
         }
 
-        .container-box { max-width: 650px; width: 92%; text-align: center; margin-top: 40px; }
-        h1 { font-family: 'Space Grotesk'; font-size: clamp(2.5rem, 12vw, 4.5rem); font-weight: 700; background: linear-gradient(90deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 5px; }
+        .container-box { 
+            max-width: 650px; 
+            width: 92%; 
+            text-align: center; 
+            margin-top: 120px; 
+        }
+        
+        /* MAIN TITLE WITH FLOAT ANIMATION */
+        h1 { 
+            font-family: 'Space Grotesk'; 
+            font-size: clamp(2.5rem, 12vw, 4.5rem); 
+            font-weight: 700; 
+            background: linear-gradient(90deg, var(--primary), var(--secondary)); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+            margin-bottom: 5px;
+            animation: float 4s ease-in-out infinite; /* Added slow floating here */
+            display: inline-block;
+        }
+
         .description { color: #ffffff; text-shadow: 1px 1px 2px black; font-size: 0.85rem; margin-bottom: 25px; letter-spacing: 0.5px; line-height: 1.5; }
 
         .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 25px; }
@@ -142,7 +152,7 @@
 
 <div class="header-bar">
     <a href="." class="header-logo-link">
-        <img src="smSafWCC_400x400.png" alt="Logo" class="header-logo-img">
+        <img src="1000023512.png" alt="Logo" class="header-logo-img">
     </a>
     
     <div style="display: flex; align-items: center; gap: 15px;">
@@ -160,7 +170,7 @@
 
 <div class="main-layout">
     <div class="container-box">
-        <h1>BRONIN</h1>
+        <h1>BRONIN</h1> 
         <p class="description"><b>BRONIN</b> is a meme token created for fun, community, and shared energy. It thrives on viral culture and the belief that memes can build real connections on SOLANA network.</p>
         
         <div class="stats-grid">
@@ -347,5 +357,3 @@
 </script>
 </body>
 </html>
-
-
